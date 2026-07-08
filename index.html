@@ -1,0 +1,2313 @@
+<!doctype html><html lang="en">
+ <head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+  <title>WebXR Marker Tracking Module</title>
+  <meta content="CG-DRAFT" name="w3c-status">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
+  <meta content="Bikeshed version d113b2e81, updated Tue Jun 9 14:57:55 2026 -0700" name="generator">
+  <link href="https://immersive-web.github.io/marker-tracking/" rel="canonical">
+  <link href="https://www.w3.org/2008/site/images/favicon.ico" rel="icon">
+  <meta content="5c2eebf3e8b2be93ce8788c72206db9ee08d50a2" name="revision">
+  <meta content="dark light" name="color-scheme">
+  <link href="https://www.w3.org/StyleSheets/TR/2021/dark.css" media="(prefers-color-scheme: dark)" rel="stylesheet" type="text/css">
+  <link href="favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+  <link href="favicon-96x96.png" rel="icon" sizes="96x96" type="image/png">
+<style>
+  .unstable::before {
+    content: "This section is not stable";
+    display: block;
+    font-weight: bold;
+    text-align: right;
+    color: red;
+  }
+  .unstable {
+    border: thin solid pink;
+    border-radius: .5em;
+    padding: .5em;
+    margin: .5em calc(-0.5em - 1px);
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='290'><text transform='rotate(-45)' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='70' y='210' opacity='.1'>Unstable</text></svg>");
+    background-repeat: repeat;
+    background-color: #FFF4F4;
+  }
+  .unstable h3:first-of-type {
+    margin-top: 0.5rem;
+  }
+
+  .unstable.example:not(.no-marker)::before {
+    content: "Example " counter(example) " (Unstable)";
+    float: none;
+  }
+
+  .non-normative::before {
+    content: "This section is non-normative.";
+    font-style: italic;
+  }
+  .tg {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
+  .tg th {
+    border-style: solid;
+    border-width: 1px;
+    background: #90b8de;
+    color: #fff;
+    font-family: sans-serif;
+    font-weight: bold;
+    border-color: grey;
+  }
+  .tg td {
+    padding: 4px 5px;
+    background-color: rgb(221, 238, 255);
+    font-family: monospace;
+    border-style: solid;
+    border-width: 1px;
+    border-color: grey;
+    overflow: hidden;
+    word-break: normal;
+  }
+</style>
+<style>/* Boilerplate: style-autolinks */
+.css.css, .property.property, .descriptor.descriptor {
+    color: var(--a-normal-text);
+    font-size: inherit;
+    font-family: inherit;
+}
+.css::before, .property::before, .descriptor::before {
+    content: "‘";
+}
+.css::after, .property::after, .descriptor::after {
+    content: "’";
+}
+.property, .descriptor {
+    /* Don't wrap property and descriptor names */
+    white-space: nowrap;
+}
+.type { /* CSS value <type> */
+    font-style: italic;
+}
+pre .property::before, pre .property::after {
+    content: "";
+}
+[data-link-type="property"]::before,
+[data-link-type="propdesc"]::before,
+[data-link-type="descriptor"]::before,
+[data-link-type="value"]::before,
+[data-link-type="function"]::before,
+[data-link-type="at-rule"]::before,
+[data-link-type="selector"]::before,
+[data-link-type="maybe"]::before {
+    content: "‘";
+}
+[data-link-type="property"]::after,
+[data-link-type="propdesc"]::after,
+[data-link-type="descriptor"]::after,
+[data-link-type="value"]::after,
+[data-link-type="function"]::after,
+[data-link-type="at-rule"]::after,
+[data-link-type="selector"]::after,
+[data-link-type="maybe"]::after {
+    content: "’";
+}
+
+[data-link-type].production::before,
+[data-link-type].production::after,
+.prod [data-link-type]::before,
+.prod [data-link-type]::after {
+    content: "";
+}
+
+[data-link-type=element],
+[data-link-type=element-attr] {
+    font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace;
+    font-size: .9em;
+}
+[data-link-type=element]::before { content: "<" }
+[data-link-type=element]::after  { content: ">" }
+
+[data-link-type=biblio] {
+    white-space: pre;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --selflink-text: black;
+        --selflink-bg: silver;
+        --selflink-hover-text: white;
+    }
+}
+</style>
+<style>/* Boilerplate: style-colors */
+/* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
+:root {
+    color-scheme: light dark;
+
+    --text: black;
+    --bg: white;
+
+    --unofficial-watermark: url(https://www.w3.org/StyleSheets/TR/2016/logos/UD-watermark);
+
+    --logo-bg: #1a5e9a;
+    --logo-active-bg: #c00;
+    --logo-text: white;
+
+    --tocnav-normal-text: #707070;
+    --tocnav-normal-bg: var(--bg);
+    --tocnav-hover-text: var(--tocnav-normal-text);
+    --tocnav-hover-bg: #f8f8f8;
+    --tocnav-active-text: #c00;
+    --tocnav-active-bg: var(--tocnav-normal-bg);
+
+    --tocsidebar-text: var(--text);
+    --tocsidebar-bg: #f7f8f9;
+    --tocsidebar-shadow: rgba(0,0,0,.1);
+    --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+    --toclink-text: var(--text);
+    --toclink-underline: #3980b5;
+    --toclink-visited-text: var(--toclink-text);
+    --toclink-visited-underline: #054572;
+
+    --heading-text: #005a9c;
+
+    --hr-text: var(--text);
+
+    --algo-border: #def;
+
+    --del-text: red;
+    --del-bg: transparent;
+    --ins-text: #080;
+    --ins-bg: transparent;
+
+    --a-normal-text: #034575;
+    --a-normal-underline: #bbb;
+    --a-visited-text: var(--a-normal-text);
+    --a-visited-underline: #707070;
+    --a-hover-bg: rgba(75%, 75%, 75%, .25);
+    --a-active-text: #c00;
+    --a-active-underline: #c00;
+
+    --blockquote-border: silver;
+    --blockquote-bg: transparent;
+    --blockquote-text: currentcolor;
+
+    --issue-border: #e05252;
+    --issue-bg: #fbe9e9;
+    --issue-text: var(--text);
+    --issueheading-text: #831616;
+
+    --example-border: #e0cb52;
+    --example-bg: #fcfaee;
+    --example-text: var(--text);
+    --exampleheading-text: #574b0f;
+
+    --note-border: #52e052;
+    --note-bg: #e9fbe9;
+    --note-text: var(--text);
+    --noteheading-text: hsl(120, 70%, 30%);
+    --notesummary-underline: silver;
+
+    --assertion-border: #aaa;
+    --assertion-bg: #eee;
+    --assertion-text: black;
+
+    --advisement-border: orange;
+    --advisement-bg: #fec;
+    --advisement-text: var(--text);
+    --advisementheading-text: #b35f00;
+
+    --warning-border: red;
+    --warning-bg: hsla(40,100%,50%,0.95);
+    --warning-text: var(--text);
+
+    --amendment-border: #330099;
+    --amendment-bg: #F5F0FF;
+    --amendment-text: var(--text);
+    --amendmentheading-text: #220066;
+
+    --def-border: #8ccbf2;
+    --def-bg: #def;
+    --def-text: var(--text);
+    --defrow-border: #bbd7e9;
+
+    --datacell-border: silver;
+
+    --indexinfo-text: #707070;
+
+    --indextable-hover-text: black;
+    --indextable-hover-bg: #f7f8f9;
+
+    --outdatedspec-bg: rgba(0, 0, 0, .5);
+    --outdatedspec-text: black;
+    --outdated-bg: maroon;
+    --outdated-text: white;
+    --outdated-shadow: red;
+
+    --editedrec-bg: darkorange;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: #ddd;
+        --bg: black;
+
+        --unofficial-watermark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cg fill='%23100808' transform='translate(200 200) rotate(-45) translate(-200 -200)' stroke='%23100808' stroke-width='3'%3E%3Ctext x='50%25' y='220' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EUNOFFICIAL%3C/text%3E%3Ctext x='50%25' y='305' style='font: bold 70px sans-serif; text-anchor: middle; letter-spacing: 6px;'%3EDRAFT%3C/text%3E%3C/g%3E%3C/svg%3E");
+
+        --logo-bg: #1a5e9a;
+        --logo-active-bg: #c00;
+        --logo-text: white;
+
+        --tocnav-normal-text: #999;
+        --tocnav-normal-bg: var(--bg);
+        --tocnav-hover-text: var(--tocnav-normal-text);
+        --tocnav-hover-bg: #080808;
+        --tocnav-active-text: #f44;
+        --tocnav-active-bg: var(--tocnav-normal-bg);
+
+        --tocsidebar-text: var(--text);
+        --tocsidebar-bg: #080808;
+        --tocsidebar-shadow: rgba(255,255,255,.1);
+        --tocsidebar-heading-text: hsla(203,20%,40%,.7);
+
+        --toclink-text: var(--text);
+        --toclink-underline: #6af;
+        --toclink-visited-text: var(--toclink-text);
+        --toclink-visited-underline: #054572;
+
+        --heading-text: #8af;
+
+        --hr-text: var(--text);
+
+        --algo-border: #456;
+
+        --del-text: #f44;
+        --del-bg: transparent;
+        --ins-text: #4a4;
+        --ins-bg: transparent;
+
+        --a-normal-text: #6af;
+        --a-normal-underline: #555;
+        --a-visited-text: var(--a-normal-text);
+        --a-visited-underline: var(--a-normal-underline);
+        --a-hover-bg: rgba(25%, 25%, 25%, .2);
+        --a-active-text: #f44;
+        --a-active-underline: var(--a-active-text);
+
+        --borderedblock-bg: rgba(255, 255, 255, .05);
+
+        --blockquote-border: silver;
+        --blockquote-bg: var(--borderedblock-bg);
+        --blockquote-text: currentcolor;
+
+        --issue-border: #e05252;
+        --issue-bg: var(--borderedblock-bg);
+        --issue-text: var(--text);
+        --issueheading-text: hsl(0deg, 70%, 70%);
+
+        --example-border: hsl(50deg, 90%, 60%);
+        --example-bg: var(--borderedblock-bg);
+        --example-text: var(--text);
+        --exampleheading-text: hsl(50deg, 70%, 70%);
+
+        --note-border: hsl(120deg, 100%, 35%);
+        --note-bg: var(--borderedblock-bg);
+        --note-text: var(--text);
+        --noteheading-text: hsl(120, 70%, 70%);
+        --notesummary-underline: silver;
+
+        --assertion-border: #444;
+        --assertion-bg: var(--borderedblock-bg);
+        --assertion-text: var(--text);
+
+        --advisement-border: orange;
+        --advisement-bg: #222218;
+        --advisement-text: var(--text);
+        --advisementheading-text: #f84;
+
+        --warning-border: red;
+        --warning-bg: hsla(40,100%,20%,0.95);
+        --warning-text: var(--text);
+
+        --amendment-border: #330099;
+        --amendment-bg: #080010;
+        --amendment-text: var(--text);
+        --amendmentheading-text: #cc00ff;
+
+        --def-border: #8ccbf2;
+        --def-bg: #080818;
+        --def-text: var(--text);
+        --defrow-border: #136;
+
+        --datacell-border: silver;
+
+        --indexinfo-text: #aaa;
+
+        --indextable-hover-text: var(--text);
+        --indextable-hover-bg: #181818;
+
+        --outdatedspec-bg: rgba(255, 255, 255, .5);
+        --outdatedspec-text: black;
+        --outdated-bg: maroon;
+        --outdated-text: white;
+        --outdated-shadow: red;
+
+        --editedrec-bg: darkorange;
+    }
+    /* In case a transparent-bg image doesn't expect to be on a dark bg,
+       which is quite common in practice... */
+    img { background: white; }
+}
+</style>
+<style>/* Boilerplate: style-counters */
+body {
+    counter-reset: example figure issue table;
+}
+.issue {
+    counter-increment: issue;
+}
+.issue:not(.no-marker)::before {
+    content: "Issue " counter(issue);
+}
+
+.example {
+    counter-increment: example;
+}
+.example:not(.no-marker)::before {
+    content: "Example " counter(example);
+}
+.invalid.example:not(.no-marker)::before,
+.illegal.example:not(.no-marker)::before {
+    content: "Invalid Example " counter(example);
+}
+
+figcaption {
+    counter-increment: figure;
+}
+figcaption:not(.no-marker)::before {
+    content: "Figure " counter(figure) " ";
+}
+
+figure.table figcaption {
+    counter-increment: table;
+}
+figure.table figcaption:not(.no-marker)::before {
+    content: "Table " counter(table) " ";
+}
+</style>
+<style>/* Boilerplate: style-dfn-panel */
+:root {
+    --dfnpanel-bg: #ddd;
+    --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --dfnpanel-bg: #222;
+        --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
+    }
+}
+.dfn-panel {
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.75em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--dfnpanel-bg);
+    color: var(--dfnpanel-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+.dfn-panel:not(.on) { display: none; }
+.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
+.dfn-panel > b { display: block; }
+.dfn-panel a { color: var(--dfnpanel-text); }
+.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
+.dfn-panel > b + b { margin-top: 0.25em; }
+.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
+.dfn-panel li a {
+    max-width: calc(300px - 1.5em - 1em);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dfn-panel.activated {
+    display: inline-block;
+    position: fixed;
+    left: 8px;
+    bottom: 2em;
+    margin: 0 auto;
+    max-width: calc(100vw - 1.5em - .4em - .5em);
+    max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
+}
+
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
+}
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
+    }
+}
+</style>
+<style>/* Boilerplate: style-idl-highlighting */
+pre.idl.highlight {
+    background: var(--borderedblock-bg, var(--def-bg));
+}
+</style>
+<style>/* Boilerplate: style-issues */
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+<style>/* Boilerplate: style-md-lists */
+/* This is a weird hack for me not yet following the commonmark spec
+   regarding paragraph and lists. */
+[data-md] > :first-child {
+    margin-top: 0;
+}
+[data-md] > :last-child {
+    margin-bottom: 0;
+}
+</style>
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
+
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
+:root {
+    --selflink-text: white;
+    --selflink-bg: gray;
+    --selflink-hover-text: black;
+}
+.heading, .issue, .note, .example, li, dt {
+    position: relative;
+}
+a.self-link {
+    position: absolute;
+    top: 0;
+    left: calc(-1 * (3.5rem - 26px));
+    width: calc(3.5rem - 26px);
+    height: 2em;
+    text-align: center;
+    border: none;
+    transition: opacity .2s;
+    opacity: .5;
+}
+a.self-link:hover {
+    opacity: 1;
+}
+.heading > a.self-link {
+    font-size: 83%;
+}
+.example > a.self-link,
+.note > a.self-link,
+.issue > a.self-link {
+    /* These blocks are overflow:auto, so positioning outside
+       doesn't work. */
+    left: auto;
+    right: 0;
+}
+li > a.self-link {
+    left: calc(-1 * (3.5rem - 26px) - 2em);
+}
+dfn > a.self-link {
+    top: auto;
+    left: auto;
+    opacity: 0;
+    width: 1.5em;
+    height: 1.5em;
+    background: var(--selflink-bg);
+    color: var(--selflink-text);
+    font-style: normal;
+    transition: opacity .2s, background-color .2s, color .2s;
+}
+dfn:hover > a.self-link {
+    opacity: 1;
+}
+dfn > a.self-link:hover {
+    color: var(--selflink-hover-text);
+}
+
+a.self-link::before            { content: "¶"; }
+.heading > a.self-link::before { content: "§"; }
+dfn > a.self-link::before      { content: "#"; }
+</style>
+<style>/* Boilerplate: style-syntax-highlighting */
+code.highlight { padding: .1em; border-radius: .3em; }
+pre.highlight, pre > code.highlight { display: block; padding: 1em; margin: .5em 0; overflow: auto; border-radius: 0; }
+
+.highlight:not(.idl) { background: rgba(0, 0, 0, .03); }
+c-[a] { color: #990055 } /* Keyword.Declaration */
+c-[b] { color: #990055 } /* Keyword.Type */
+c-[c] { color: #708090 } /* Comment */
+c-[d] { color: #708090 } /* Comment.Multiline */
+c-[e] { color: #0077aa } /* Name.Attribute */
+c-[f] { color: #669900 } /* Name.Tag */
+c-[g] { color: #222222 } /* Name.Variable */
+c-[k] { color: #990055 } /* Keyword */
+c-[l] { color: #000000 } /* Literal */
+c-[m] { color: #000000 } /* Literal.Number */
+c-[n] { color: #0077aa } /* Name */
+c-[o] { color: #999999 } /* Operator */
+c-[p] { color: #999999 } /* Punctuation */
+c-[s] { color: #a67f59 } /* Literal.String */
+c-[t] { color: #a67f59 } /* Literal.String.Single */
+c-[u] { color: #a67f59 } /* Literal.String.Double */
+c-[cp] { color: #708090 } /* Comment.Preproc */
+c-[c1] { color: #708090 } /* Comment.Single */
+c-[cs] { color: #708090 } /* Comment.Special */
+c-[kc] { color: #990055 } /* Keyword.Constant */
+c-[kn] { color: #990055 } /* Keyword.Namespace */
+c-[kp] { color: #990055 } /* Keyword.Pseudo */
+c-[kr] { color: #990055 } /* Keyword.Reserved */
+c-[ld] { color: #000000 } /* Literal.Date */
+c-[nc] { color: #0077aa } /* Name.Class */
+c-[no] { color: #0077aa } /* Name.Constant */
+c-[nd] { color: #0077aa } /* Name.Decorator */
+c-[ni] { color: #0077aa } /* Name.Entity */
+c-[ne] { color: #0077aa } /* Name.Exception */
+c-[nf] { color: #0077aa } /* Name.Function */
+c-[nl] { color: #0077aa } /* Name.Label */
+c-[nn] { color: #0077aa } /* Name.Namespace */
+c-[py] { color: #0077aa } /* Name.Property */
+c-[ow] { color: #999999 } /* Operator.Word */
+c-[mb] { color: #000000 } /* Literal.Number.Bin */
+c-[mf] { color: #000000 } /* Literal.Number.Float */
+c-[mh] { color: #000000 } /* Literal.Number.Hex */
+c-[mi] { color: #000000 } /* Literal.Number.Integer */
+c-[mo] { color: #000000 } /* Literal.Number.Oct */
+c-[sb] { color: #a67f59 } /* Literal.String.Backtick */
+c-[sc] { color: #a67f59 } /* Literal.String.Char */
+c-[sd] { color: #a67f59 } /* Literal.String.Doc */
+c-[se] { color: #a67f59 } /* Literal.String.Escape */
+c-[sh] { color: #a67f59 } /* Literal.String.Heredoc */
+c-[si] { color: #a67f59 } /* Literal.String.Interpol */
+c-[sx] { color: #a67f59 } /* Literal.String.Other */
+c-[sr] { color: #a67f59 } /* Literal.String.Regex */
+c-[ss] { color: #a67f59 } /* Literal.String.Symbol */
+c-[vc] { color: #0077aa } /* Name.Variable.Class */
+c-[vg] { color: #0077aa } /* Name.Variable.Global */
+c-[vi] { color: #0077aa } /* Name.Variable.Instance */
+c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
+
+@media (prefers-color-scheme: dark) {
+    .highlight:not(.idl) { background: rgba(255, 255, 255, .05); }
+
+    c-[a] { color: #d33682 } /* Keyword.Declaration */
+    c-[b] { color: #d33682 } /* Keyword.Type */
+    c-[c] { color: #2aa198 } /* Comment */
+    c-[d] { color: #2aa198 } /* Comment.Multiline */
+    c-[e] { color: #268bd2 } /* Name.Attribute */
+    c-[f] { color: #b58900 } /* Name.Tag */
+    c-[g] { color: #cb4b16 } /* Name.Variable */
+    c-[k] { color: #d33682 } /* Keyword */
+    c-[l] { color: #657b83 } /* Literal */
+    c-[m] { color: #657b83 } /* Literal.Number */
+    c-[n] { color: #268bd2 } /* Name */
+    c-[o] { color: #657b83 } /* Operator */
+    c-[p] { color: #657b83 } /* Punctuation */
+    c-[s] { color: #6c71c4 } /* Literal.String */
+    c-[t] { color: #6c71c4 } /* Literal.String.Single */
+    c-[u] { color: #6c71c4 } /* Literal.String.Double */
+    c-[ch] { color: #2aa198 } /* Comment.Hashbang */
+    c-[cp] { color: #2aa198 } /* Comment.Preproc */
+    c-[cpf] { color: #2aa198 } /* Comment.PreprocFile */
+    c-[c1] { color: #2aa198 } /* Comment.Single */
+    c-[cs] { color: #2aa198 } /* Comment.Special */
+    c-[kc] { color: #d33682 } /* Keyword.Constant */
+    c-[kn] { color: #d33682 } /* Keyword.Namespace */
+    c-[kp] { color: #d33682 } /* Keyword.Pseudo */
+    c-[kr] { color: #d33682 } /* Keyword.Reserved */
+    c-[ld] { color: #657b83 } /* Literal.Date */
+    c-[nc] { color: #268bd2 } /* Name.Class */
+    c-[no] { color: #268bd2 } /* Name.Constant */
+    c-[nd] { color: #268bd2 } /* Name.Decorator */
+    c-[ni] { color: #268bd2 } /* Name.Entity */
+    c-[ne] { color: #268bd2 } /* Name.Exception */
+    c-[nf] { color: #268bd2 } /* Name.Function */
+    c-[nl] { color: #268bd2 } /* Name.Label */
+    c-[nn] { color: #268bd2 } /* Name.Namespace */
+    c-[py] { color: #268bd2 } /* Name.Property */
+    c-[ow] { color: #657b83 } /* Operator.Word */
+    c-[mb] { color: #657b83 } /* Literal.Number.Bin */
+    c-[mf] { color: #657b83 } /* Literal.Number.Float */
+    c-[mh] { color: #657b83 } /* Literal.Number.Hex */
+    c-[mi] { color: #657b83 } /* Literal.Number.Integer */
+    c-[mo] { color: #657b83 } /* Literal.Number.Oct */
+    c-[sa] { color: #6c71c4 } /* Literal.String.Affix */
+    c-[sb] { color: #6c71c4 } /* Literal.String.Backtick */
+    c-[sc] { color: #6c71c4 } /* Literal.String.Char */
+    c-[dl] { color: #6c71c4 } /* Literal.String.Delimiter */
+    c-[sd] { color: #6c71c4 } /* Literal.String.Doc */
+    c-[se] { color: #6c71c4 } /* Literal.String.Escape */
+    c-[sh] { color: #6c71c4 } /* Literal.String.Heredoc */
+    c-[si] { color: #6c71c4 } /* Literal.String.Interpol */
+    c-[sx] { color: #6c71c4 } /* Literal.String.Other */
+    c-[sr] { color: #6c71c4 } /* Literal.String.Regex */
+    c-[ss] { color: #6c71c4 } /* Literal.String.Symbol */
+    c-[fm] { color: #268bd2 } /* Name.Function.Magic */
+    c-[vc] { color: #cb4b16 } /* Name.Variable.Class */
+    c-[vg] { color: #cb4b16 } /* Name.Variable.Global */
+    c-[vi] { color: #cb4b16 } /* Name.Variable.Instance */
+    c-[vm] { color: #cb4b16 } /* Name.Variable.Magic */
+    c-[il] { color: #657b83 } /* Literal.Number.Integer.Long */
+}
+
+@media print {
+    /* Darken colors for print that would otherwise print too faintly */
+    c-[c]  { color: #555555 } /* Comment */
+    c-[d]  { color: #555555 } /* Comment.Multiline */
+    c-[cp] { color: #555555 } /* Comment.Preproc */
+    c-[c1] { color: #555555 } /* Comment.Single */
+    c-[cs] { color: #555555 } /* Comment.Special */
+    c-[o]  { color: #222222 } /* Operator */
+    c-[p]  { color: #222222 } /* Punctuation */
+    c-[ow] { color: #222222 } /* Operator.Word */
+    c-[s]  { color: #664400 } /* Literal.String */
+    c-[t]  { color: #664400 } /* Literal.String.Single */
+    c-[u]  { color: #664400 } /* Literal.String.Double */
+    c-[sb] { color: #664400 } /* Literal.String.Backtick */
+    c-[sc] { color: #664400 } /* Literal.String.Char */
+    c-[sd] { color: #664400 } /* Literal.String.Doc */
+    c-[se] { color: #664400 } /* Literal.String.Escape */
+    c-[sh] { color: #664400 } /* Literal.String.Heredoc */
+    c-[si] { color: #664400 } /* Literal.String.Interpol */
+    c-[sx] { color: #664400 } /* Literal.String.Other */
+    c-[sr] { color: #664400 } /* Literal.String.Regex */
+    c-[ss] { color: #664400 } /* Literal.String.Symbol */
+}
+</style>
+<style>/* Boilerplate: style-var-click-highlighting */
+/*
+Colors were chosen in Lab using https://nixsensor.com/free-color-converter/
+D50 2deg illuminant, L in [0,100], a and b in [-128, 128]
+0 = lab(85,0,85)
+1 = lab(85,80,30)
+2 = lab(85,-40,40)
+3 = lab(85,-50,0)
+4 = lab(85,5,15)
+5 = lab(85,-10,-50)
+6 = lab(85,35,-15)
+
+For darkmode:
+0 = oklab(50%   0%  108%)
+1 = oklab(50% -51%   51%)
+2 = oklab(50% -64%  -20%)
+3 = oklab(50%   6%   19%)
+4 = oklab(50% -12%  -64%)
+5 = oklab(50%  44%  -19%)  
+6 = oklab(50% 102%   38%)
+*/
+
+[data-algorithm] var { cursor: pointer; }
+var[data-var-color] { background-color: var(--var-bg); box-shadow: 0 0 0 2px var(--var-bg); }
+
+var[data-var-color] { --var-bg: #F4D200; }
+var[data-var-color="1"] { --var-bg: #FF87A2; }
+var[data-var-color="2"] { --var-bg: #96E885; }
+var[data-var-color="3"] { --var-bg: #3EEED2; }
+var[data-var-color="4"] { --var-bg: #EACFB6; }
+var[data-var-color="5"] { --var-bg: #82DDFF; }
+var[data-var-color="6"] { --var-vg: #FFBCF2; }
+
+@media (prefers-color-scheme: dark) {
+	var[data-var-color] { --var-bg: #bc1a00; }
+	var[data-var-color="1"] { --var-bg: #007f00; }
+	var[data-var-color="2"] { --var-bg: #008698; }
+	var[data-var-color="3"] { --var-bg: #7f5b2b; }
+	var[data-var-color="4"] { --var-bg: #004df3; }
+	var[data-var-color="5"] { --var-bg: #a1248a; }
+	var[data-var-color="6"] { --var-vg: #ff0000; }
+}
+</style>
+ <body class="h-entry">
+  <div class="head">
+   <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/">
+    <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72">
+</a>
+</p>
+   <h1 class="no-ref p-name" id="title">WebXR Marker Tracking Module</h1>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types/#CG-DRAFT">Draft Community Group Report</a>,
+    <time class="dt-updated" datetime="2026-07-08">8 July 2026</time></p>
+   <details open>
+    <summary>More details about this document</summary>
+    <div data-fill-with="spec-metadata">
+     <dl>
+      <dt>This version:
+      <dd><a class="u-url" href="https://immersive-web.github.io/marker-tracking/">https://immersive-web.github.io/marker-tracking/</a>
+      <dt>Issue Tracking:
+      <dd><a href="https://github.com/immersive-web/marker-tracking/issues/">GitHub</a>
+      <dt class="editor">Editor:
+      <dd class="editor h-card p-author vcard" data-editor-id="114716"><a class="email fn p-name u-email" href="mailto:alcooper@google.com">Alex Cooper</a> (<a class="org p-org" href="http://google.com/">Google</a>)
+      <dt class="editor">Former Editors:
+      <dd class="editor h-card p-author vcard" data-editor-id="114482"><a class="email fn p-name u-email" href="mailto:bialpio@google.com">Piotr Bialecki</a> (<a class="org p-org" href="https://google.com/">Google</a>)
+      <dd class="editor h-card p-author vcard" data-editor-id="113597"><a class="email fn p-name u-email" href="mailto:klausw@google.com">Klaus Weidner</a> (<a class="org p-org" href="http://google.com/">Google</a>)
+      <dt>Participate:
+      <dd><a href="https://github.com/immersive-web/marker-tracking/issues/new">File an issue</a> (<a href="https://github.com/immersive-web/marker-tracking/issues">open issues</a>)
+      <dd><a href="https://lists.w3.org/Archives/Public/public-immersive-web/">Mailing list archive</a>
+      <dd><a href="irc://irc.w3.org:6665/">W3C’s #immersive-web IRC</a>
+     </dl>
+    </div>
+   </details>
+   <div data-fill-with="warning">
+    <details class="annoying-warning" open>
+     <summary>Unstable API</summary>
+     <p><b>The API represented in this document is under development and may change at any time.</b></p>
+     <p>For additional context on the use of this API please reference the <a href="https://github.com/immersive-web/marker-tracking/blob/master/explainer.md">WebXR Marker Tracking Module Explainer</a>.</p>
+    </details>
+   </div>
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2026 <a href="https://www.w3.org/">World Wide Web Consortium</a>. <abbr title="World Wide Web Consortium">W3C</abbr><sup>®</sup> <a href="https://www.w3.org/policies/#Legal_Disclaimer">liability</a>, <a href="https://www.w3.org/policies/#W3C_Trademarks">trademark</a> and <a href="https://www.w3.org/copyright/software-license/" rel="license" title="W3C Software and Document License">permissive document license</a> rules apply.
+</p>
+   <hr title="Separator for header">
+  </div>
+  <div class="p-summary" data-fill-with="abstract">
+   <h2 class="heading no-num no-ref no-toc settled" id="abstract"><span class="content">Abstract</span></h2>
+   <p>The Marker Tracking module expands the <a href="https://www.w3.org/TR/webxr/">WebXR Device API</a> with functionality to detect 2D images from a specified set and track their poses in the real world.</p>
+  </div>
+  <h2 class="heading no-num no-ref no-toc settled" id="sotd"><span class="content">Status of this document</span></h2>
+  <div data-fill-with="status">
+   <p></p>
+  </div>
+  <div data-fill-with="at-risk"></div>
+  <nav data-fill-with="table-of-contents" id="toc">
+   <h2 class="no-num no-ref no-toc" id="contents">Table of Contents</h2>
+   <ol class="toc">
+    <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a>
+    <li>
+     <a href="#model"><span class="secno">2</span> <span class="content">Model</span></a>
+     <ol class="toc">
+      <li><a href="#spec-tracked-image"><span class="secno">2.1</span> <span class="content">Tracked Image</span></a>
+     </ol>
+    <li>
+     <a href="#webxr-device-api-integration"><span class="secno">3</span> <span class="content">WebXR Device API Integration</span></a>
+     <ol class="toc">
+      <li><a href="#xrsessioninit"><span class="secno">3.1</span> <span class="content">XRSessionInit</span></a>
+      <li><a href="#xrsession"><span class="secno">3.2</span> <span class="content">XRSession</span></a>
+      <li><a href="#xrframe"><span class="secno">3.3</span> <span class="content">XRFrame</span></a>
+     </ol>
+    <li>
+     <a href="#security"><span class="secno">4</span> <span class="content">Security, Privacy, and Comfort Considerations</span></a>
+     <ol class="toc">
+      <li><a href="#sensitive-information"><span class="secno">4.1</span> <span class="content">Sensitive Information</span></a>
+      <li>
+       <a href="#protected-functionality"><span class="secno">4.2</span> <span class="content">Protected functionality</span></a>
+       <ol class="toc">
+        <li><a href="#protect-image-presence"><span class="secno">4.2.1</span> <span class="content">Presence of images</span></a>
+       </ol>
+     </ol>
+    <li><a href="#ack"><span class="secno">5</span> <span class="content">Acknowledgements</span></a>
+    <li>
+     <a href="#w3c-conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
+     <ol class="toc">
+      <li><a href="#w3c-conventions"><span class="secno"></span> <span class="content">Document conventions</span></a>
+     </ol>
+    <li>
+     <a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ol class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+      <li><a href="#index-defined-elsewhere"><span class="secno"></span> <span class="content">Terms defined by reference</span></a>
+     </ol>
+    <li>
+     <a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+     <ol class="toc">
+      <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
+     </ol>
+    <li><a href="#idl-index"><span class="secno"></span> <span class="content">IDL Index</span></a>
+   </ol>
+  </nav>
+  <main>
+   <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
+   <section class="non-normative">
+    <p>This module describes a mechanism for detecting 2D images in the real world and tracking their poses (position and orientation). The application supplies a set of images to be tracked when requesting an XR session. The XR device determines if the images are suitable for tracking, and returns information about their real-world position and orientation as they are detected in the user’s environment.</p>
+    <p>Since detecting and tracking these images happens locally on the device, this functionality can be implemented without providing camera images to the application.</p>
+   </section>
+   <h2 class="heading settled" data-level="2" id="model"><span class="secno">2. </span><span class="content">Model</span><a class="self-link" href="#model"></a></h2>
+   <h3 class="heading settled" data-level="2.1" id="spec-tracked-image"><span class="secno">2.1. </span><span class="content">Tracked Image</span><a class="self-link" href="#spec-tracked-image"></a></h3>
+   <p>A <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="tracked-image">tracked image</dfn> corresponds to the information used by the XR device to track an image.</p>
+   <p>A <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image">tracked image</a> has an associated integer <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="image-index">image index</dfn> which is the zero-based index of this image in the <code class="idl"><a data-link-type="idl" href="#dom-xrsessioninit-trackedimages" id="ref-for-dom-xrsessioninit-trackedimages">trackedImages</a></code> sequence provided in the session request.</p>
+   <p>A <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image①">tracked image</a> has an associated <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="image-trackable">image trackable</dfn> status which corresponds to the XR device’s ability to track this image based on characteristics of the supplied image itself. This is a boolean value, it is <code>false</code> if the image is unsuitable for tracking and guaranteed to never appear in image tracking results for this <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession">XRSession</a></code>, and otherwise <code>true</code>.</p>
+   <p>A <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image②">tracked image</a> has an <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="image-was-detected">image was detected</dfn> flag. This is initially <code>false</code>. It is set to <code>true</code> once the <a data-link-type="dfn" href="#suitable-for-tracking" id="ref-for-suitable-for-tracking">suitable for tracking</a> algorithm returns <code>true</code> for a frame, and then remains <code>true</code> for the rest of the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession①">XRSession</a></code>.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> A <code>true</code> value returned by the <a data-link-type="dfn" href="#suitable-for-tracking" id="ref-for-suitable-for-tracking①">suitable for tracking</a> algorithm indicates that the XR device has found this image during this session, its current view meets suitability requirements, and that the UA is going to provide tracking information for it from this point onward without further suitability checks.</p>
+   <p>A <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image③">tracked image</a> has an associated <code class="idl"><a data-link-type="idl" href="#enumdef-xrimagetrackingstate" id="ref-for-enumdef-xrimagetrackingstate">XRImageTrackingState</a></code> <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="image-tracking-state">image tracking state</dfn>. This is <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked">"untracked"</a></code> if the image is not being tracked at all, <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-tracked" id="ref-for-dom-xrimagetrackingstate-tracked">"tracked"</a></code> if it is actively being tracked and visible, or <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-emulated" id="ref-for-dom-xrimagetrackingstate-emulated">"emulated"</a></code> if its pose is extrapolated from a past tracked state.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-tracked" id="ref-for-dom-xrimagetrackingstate-tracked①">"tracked"</a></code> typically means the image was recognized and is currently being actively tracked in 3D space, and is at least partially visible to a tracking camera. (This does not necessarily mean that it’s visible in the user’s viewport in case that differs from the tracking camera field of view.) <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-emulated" id="ref-for-dom-xrimagetrackingstate-emulated①">"emulated"</a></code> means that the image was recognized and tracked recently, but may currently be out of camera view or obscured, and the reported pose is based on assuming that the object remains at the same position and orientation as when it was last seen. This pose is likely to be adequate for a poster attached to a wall, but may be unhelpful for an image attached to a moving object.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> The <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked①">"untracked"</a></code> value for <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state">image tracking state</a> is an internal detail of the algorithms described below. The <code class="idl"><a data-link-type="idl" href="#dom-xrframe-getimagetrackingresults" id="ref-for-dom-xrframe-getimagetrackingresults">getImageTrackingResults()</a></code> API only returns information about images where the state is either <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-tracked" id="ref-for-dom-xrimagetrackingstate-tracked②">"tracked"</a></code> or <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-emulated" id="ref-for-dom-xrimagetrackingstate-emulated②">"emulated"</a></code>.</p>
+   <p>A <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image④">tracked image</a> has an associated <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace">XRSpace</a></code> <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="image-space">image space</dfn> that represents the tracking system’s <u class="link-error" data-lt="6DoF" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;6dof&apos; with spec &apos;webxr-1&apos;.">6DoF</u> pose of the image in the user’s environment. The <a data-link-type="dfn" href="#image-space" id="ref-for-image-space">image space</a> origin is the center point of the tracked image. The +x axis points toward the right edge of the image and +y toward the top of the image. The +z axis is orthogonal to the picture plane, pointing toward the viewer when the image’s front is in view.</p>
+   <p>The <a data-link-type="dfn" href="#image-space" id="ref-for-image-space①">image space</a> is used for <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrframe-getpose" id="ref-for-dom-xrframe-getpose">getPose()</a></code> calls according to the <u class="link-error" data-lt="populate the pose" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;populate the pose&apos; with spec &apos;webxr-1&apos;.">populate the pose</u> algorithm with <code>force emulation</code> set to <code>false</code>. The tracking system MAY provide either actively tracked or statically known (emulated) poses.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> A <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrframe-getpose" id="ref-for-dom-xrframe-getpose①">getPose()</a></code> call using the <a data-link-type="dfn" href="#image-space" id="ref-for-image-space②">image space</a> of an image with an <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state①">image tracking state</a> of <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked②">"untracked"</a></code> will report a <code>null</code> pose.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> For tracked images, the returned pose’s <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition" id="ref-for-dom-xrpose-emulatedposition">emulatedPosition</a></code> value is always <code>false</code>. This attribute is intended to indicate a pose with a known orientation combined with an unknown position, for example a <u class="link-error" data-lt="3DoF" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;3dof&apos; with spec &apos;webxr-1&apos;.">3DoF</u> headset, and that doesn’t fit this use case where both orientation and pose are emulated. Instead, the tracking system treats previously seen but not actively tracked images as statically known, and uses the <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state②">image tracking state</a> <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-emulated" id="ref-for-dom-xrimagetrackingstate-emulated③">"emulated"</a></code> to distinguish them from actively tracked images with <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state③">image tracking state</a> <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-tracked" id="ref-for-dom-xrimagetrackingstate-tracked③">"tracked"</a></code>.</p>
+   <p>A <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image⑤">tracked image</a> has an associated float <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="measured-width-in-meters">measured width in meters</dfn> corresponding to the physical width of the image as measured by the tracking system. It is zero if the device is unable to measure the image’s size.</p>
+   <h2 class="heading settled" data-level="3" id="webxr-device-api-integration"><span class="secno">3. </span><span class="content">WebXR Device API Integration</span><a class="self-link" href="#webxr-device-api-integration"></a></h2>
+   <p>This module expands the definitions of <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dictdef-xrsessioninit" id="ref-for-dictdef-xrsessioninit">XRSessionInit</a></code>, <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession②">XRSession</a></code>, and <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe">XRFrame</a></code>.</p>
+   <h3 class="heading settled" data-level="3.1" id="xrsessioninit"><span class="secno">3.1. </span><span class="content">XRSessionInit</span><a class="self-link" href="#xrsessioninit"></a></h3>
+   <p>This module introduces the string <dfn class="dfn-paneled" data-dfn-for="feature descriptor" data-dfn-type="dfn" data-export id="feature-descriptor-marker-tracking">marker-tracking</dfn> as a new valid <u class="link-error" data-lt="feature descriptor" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;feature descriptor&apos; with spec &apos;webxr-1&apos;.">feature descriptor</u> for use in the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures" id="ref-for-dom-xrsessioninit-requiredfeatures">requiredFeatures</a></code> or <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures" id="ref-for-dom-xrsessioninit-optionalfeatures">optionalFeatures</a></code> sequences for <u class="link-error" data-lt="immersive sessions" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;immersive sessions&apos; with spec &apos;webxr-1&apos;.">immersive sessions</u>.</p>
+   <p>A device is <u class="link-error" data-lt="capable of supporting" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;capable of supporting&apos; with spec &apos;webxr-1&apos;.">capable of supporting</u> the marker tracking feature if the XR device is capable of detecting and tracking images in the real world.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> There is no guarantee that the specific images supplied for a session are trackable. For example, an image where all pixels have the same color would likely be untrackable due to lack of features, and some types of images such as synthetic markers may only be trackable on some implementations. However, a device should not claim to support the feature if it completely lacks tracking capability.</p>
+   <p>The XRSessionInit dictionary is expanded by adding a new <code class="idl"><a data-link-type="idl" href="#dom-xrsessioninit-trackedimages" id="ref-for-dom-xrsessioninit-trackedimages①">trackedImages</a></code> member that is used to <a data-link-type="dfn" href="#set-up-tracked-images" id="ref-for-set-up-tracked-images">set up tracked images</a>. It is a sequence of <code class="idl"><a data-link-type="idl" href="#dictdef-xrtrackedimageinit" id="ref-for-dictdef-xrtrackedimageinit">XRTrackedImageInit</a></code> values.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> <code class="idl"><a data-link-type="idl" href="#dom-xrsessioninit-trackedimages" id="ref-for-dom-xrsessioninit-trackedimages②">trackedImages</a></code> is an optional member of <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dictdef-xrsessioninit" id="ref-for-dictdef-xrsessioninit①">XRSessionInit</a></code>, but the feature will effectively be inactive if it is not supplied. There is no default set of tracked images.</p>
+<pre class="def highlight idl"><c- b>dictionary</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="dictionary" data-export id="dictdef-xrtrackedimageinit"><code><c- g>XRTrackedImageInit</c-></code></dfn> {
+  <c- b>required</c-> <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagebitmap" id="ref-for-imagebitmap"><c- n>ImageBitmap</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRTrackedImageInit" data-dfn-type="dict-member" data-export data-type="ImageBitmap" id="dom-xrtrackedimageinit-image"><code><c- g>image</c-></code></dfn>;
+  <c- b>required</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float" id="ref-for-idl-float"><c- b>float</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRTrackedImageInit" data-dfn-type="dict-member" data-export data-type="float" id="dom-xrtrackedimageinit-widthinmeters"><code><c- g>widthInMeters</c-></code></dfn>;
+};
+
+<c- b>partial</c-> <c- b>dictionary</c-> <a class="idl-code" data-link-type="dictionary" href="https://immersive-web.github.io/webxr/#dictdef-xrsessioninit" id="ref-for-dictdef-xrsessioninit②"><c- g>XRSessionInit</c-></a> {
+  <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence" id="ref-for-idl-sequence"><c- b>sequence</c-></a>&lt;<a data-link-type="idl-name" href="#dictdef-xrtrackedimageinit" id="ref-for-dictdef-xrtrackedimageinit①"><c- n>XRTrackedImageInit</c-></a>> <dfn class="dfn-paneled idl-code" data-dfn-for="XRSessionInit" data-dfn-type="dict-member" data-export data-type="sequence<XRTrackedImageInit>" id="dom-xrsessioninit-trackedimages"><code><c- g>trackedImages</c-></code></dfn>;
+};
+</pre>
+   <p>Each <code class="idl"><a data-link-type="idl" href="#dom-xrsessioninit-trackedimages" id="ref-for-dom-xrsessioninit-trackedimages③">trackedImages</a></code> entry specifies an <code class="idl"><a data-link-type="idl" href="https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagebitmap" id="ref-for-imagebitmap①">ImageBitmap</a></code> and a corresponding <code class="idl"><a data-link-type="idl" href="#dom-xrtrackedimageinit-widthinmeters" id="ref-for-dom-xrtrackedimageinit-widthinmeters">widthInMeters</a></code> value that provides expected physical width measurement for the real-world image being tracked. This width may be approximate but is required. If the actual width differs substantially from the provided width, the tracked image result MAY have an inaccurate reported position.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> When viewed from a fixed camera position, a half-sized image at half the distance looks identical to a full-sized image, and the tracking system can’t differentiate these cases without additional context about the environment. The UA may be able to detect the actual size when tracking the image from multiple angles and update the measured width based on this, but is not required to do so.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> The UA MAY emit local warnings such as developer console messages if it is unable to support the feature or if the supplied images are unsuitable for tracking.</p>
+   <div class="algorithm" data-algorithm="set-up-tracked-images">
+    <p>In order to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="set-up-tracked-images">set up tracked images</dfn> for a <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession" id="ref-for-dom-xrsystem-requestsession">requestSession()</a></code> session request, add the following steps to <u class="link-error" data-lt="initialize the session" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;initialize the session&apos; with spec &apos;webxr-1&apos;.">initialize the session</u> for the new <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession③">XRSession</a></code> <var>session</var>, with <var>requested image list</var> set to the value of <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dictdef-xrsessioninit" id="ref-for-dictdef-xrsessioninit③">XRSessionInit</a></code>’s <code class="idl"><a data-link-type="idl" href="#dom-xrsessioninit-trackedimages" id="ref-for-dom-xrsessioninit-trackedimages④">trackedImages</a></code> attribute:</p>
+    <ol>
+     <li data-md>
+      <p>Set <var>session</var>’s <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image⑥">tracked images</a> to an empty list.</p>
+     <li data-md>
+      <p>If <code>marker-tracking</code> is not <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list-contain" id="ref-for-list-contain">contained</a> in <var>session</var>’s <u class="link-error" data-lt="set of granted features" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;set of granted features&apos; with spec &apos;webxr-1&apos;.">set of granted features</u>, abort these steps.</p>
+     <li data-md>
+      <p>If <var>requested image list</var> is undefined or an empty list, abort these steps.</p>
+     <li data-md>
+      <p>For each <var>requested image</var> in <var>requested image list</var>:</p>
+      <ol>
+       <li data-md>
+        <p>Set up any platform resources required to track <var>requested image</var>.</p>
+       <li data-md>
+        <p>Create a new <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image⑦">tracked image</a> <var>image</var>:</p>
+        <ol>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-index" id="ref-for-image-index">image index</a> to the position index of this image in <var>requested image list</var>.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-trackable" id="ref-for-image-trackable">image trackable</a> to either <code>true</code> or <code>false</code> depending on the platform’s expected ability to track this image.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-was-detected" id="ref-for-image-was-detected">image was detected</a> flag to <code>false</code>.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state④">image tracking state</a> to <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked③">"untracked"</a></code>.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#measured-width-in-meters" id="ref-for-measured-width-in-meters">measured width in meters</a> to zero.</p>
+         <li data-md>
+          <p>If <a data-link-type="dfn" href="#image-trackable" id="ref-for-image-trackable①">image trackable</a> is true, set <var>image</var>’s <a data-link-type="dfn" href="#image-space" id="ref-for-image-space③">image space</a> to a device <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace①">XRSpace</a></code> associated with this image.</p>
+        </ol>
+       <li data-md>
+        <p>Append <var>image</var> to <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image⑧">tracked images</a>.</p>
+      </ol>
+    </ol>
+   </div>
+   <h3 class="heading settled" data-level="3.2" id="xrsession"><span class="secno">3.2. </span><span class="content">XRSession</span><a class="self-link" href="#xrsession"></a></h3>
+   <p>Each <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession④">XRSession</a></code> has a <dfn class="dfn-paneled" data-dfn-for="XRSession" data-dfn-type="dfn" data-noexport id="xrsession-list-of-tracked-images">list of tracked images</dfn> which is the <code class="idl"><a data-link-type="idl" href="#dom-xrsessioninit-trackedimages" id="ref-for-dom-xrsessioninit-trackedimages⑤">trackedImages</a></code> sequence supplied in the session request.</p>
+   <p>When a valid <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑤">XRSession</a></code> has been established with the <a data-link-type="dfn" href="#feature-descriptor-marker-tracking" id="ref-for-feature-descriptor-marker-tracking">marker-tracking</a> feature active, the <code class="idl"><a data-link-type="idl" href="#dom-xrsession-getimagetrackability" id="ref-for-dom-xrsession-getimagetrackability">getImageTrackability()</a></code> method can be used to <a data-link-type="dfn" href="#obtain-image-trackability" id="ref-for-obtain-image-trackability">obtain image trackability</a>, it returns a promise that provides information about the expected ability to use the provided images for tracking.</p>
+<pre class="def highlight idl"><c- b>enum</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="enum" data-export id="enumdef-xrimagetrackability"><code><c- g>XRImageTrackability</c-></code></dfn> {
+  <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackability" data-dfn-type="enum-value" data-export id="dom-xrimagetrackability-untrackable"><code><c- s>"untrackable"</c-></code></dfn>,
+  <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackability" data-dfn-type="enum-value" data-export id="dom-xrimagetrackability-trackable"><code><c- s>"trackable"</c-></code></dfn>,
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑥"><c- g>XRSession</c-></a> {
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise" id="ref-for-idl-promise"><c- b>Promise</c-></a>&lt;<a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-frozen-array" id="ref-for-idl-frozen-array"><c- b>FrozenArray</c-></a>&lt;<a data-link-type="idl-name" href="#enumdef-xrimagetrackability" id="ref-for-enumdef-xrimagetrackability"><c- n>XRImageTrackability</c-></a>>> <dfn class="dfn-paneled idl-code" data-dfn-for="XRSession" data-dfn-type="method" data-export data-lt="getImageTrackability()" id="dom-xrsession-getimagetrackability"><code><c- g>getImageTrackability</c-></code></dfn>();
+};
+</pre>
+   <div class="algorithm" data-algorithm="obtain-image-trackability">
+    <p>In order to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="obtain-image-trackability">obtain image trackability</dfn> for an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑦">XRSession</a></code> <var>session</var>, the user agent MUST run the following steps:</p>
+    <ol>
+     <li data-md>
+      <p>Let <var>promise</var> be <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#a-new-promise" id="ref-for-a-new-promise">a new Promise</a> in the <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-realm" id="ref-for-concept-relevant-realm">relevant realm</a> of this <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑧">XRSession</a></code>.</p>
+     <li data-md>
+      <p>Run the following steps <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel" id="ref-for-in-parallel">in parallel</a>:</p>
+      <ol>
+       <li data-md>
+        <p>Set <var>image trackabilities</var> to an empty list.</p>
+       <li data-md>
+        <p>For each <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image⑨">tracked image</a> <var>image</var> in <var>session</var>’s <a data-link-type="dfn" href="#xrsession-list-of-tracked-images" id="ref-for-xrsession-list-of-tracked-images">list of tracked images</a>:</p>
+        <ol>
+         <li data-md>
+          <p>Obtain an <code class="idl"><a data-link-type="idl" href="#enumdef-xrimagetrackability" id="ref-for-enumdef-xrimagetrackability①">XRImageTrackability</a></code> <var>trackability</var> from the XR device that represents the trackability of <var>image</var>.</p>
+         <li data-md>
+          <p>Append <var>trackability</var> to <var>image trackabilities</var>.</p>
+        </ol>
+       <li data-md>
+        <p><a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-task" id="ref-for-queue-a-task">queue a task</a> to <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#resolve" id="ref-for-resolve">resolve</a> <var>promise</var> with the value <var>image trackabilities</var>.</p>
+      </ol>
+     <li data-md>
+      <p>Return <var>promise</var>.</p>
+    </ol>
+   </div>
+   <p>The <code class="idl"><a data-link-type="idl" href="#enumdef-xrimagetrackability" id="ref-for-enumdef-xrimagetrackability②">XRImageTrackability</a></code> enum value <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackability-untrackable" id="ref-for-dom-xrimagetrackability-untrackable">"untrackable"</a></code> means that the image is not usable for tracking, for example due to having insufficient distinctive feature points, and this image MUST NOT appear in tracking results for this session. The value <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackability-trackable" id="ref-for-dom-xrimagetrackability-trackable">"trackable"</a></code> means that the image is potentially detectable.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> Future versions of this API may define additional more granular values with quality estimates for trackable images. Applications should treat a value other than <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackability-untrackable" id="ref-for-dom-xrimagetrackability-untrackable①">"untrackable"</a></code> as representing a potentially trackable image.</p>
+   <h3 class="heading settled" data-level="3.3" id="xrframe"><span class="secno">3.3. </span><span class="content">XRFrame</span><a class="self-link" href="#xrframe"></a></h3>
+   <p>When marker tracking is active, add the <a data-link-type="dfn" href="#update-tracked-images" id="ref-for-update-tracked-images">update tracked images</a> algorithm to the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession⑨">XRSession</a></code>’s <u class="link-error" data-lt="list of frame updates" title="LINK ERROR: No &apos;dfn&apos; refs found for &apos;list of frame updates&apos; with spec &apos;webxr-1&apos;.">list of frame updates</u>.</p>
+   <div class="algorithm" data-algorithm="update-tracked-images">
+    <p>In order to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="update-tracked-images">update tracked images</dfn> for an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe①">XRFrame</a></code> <var>frame</var> in an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrsession" id="ref-for-xrsession①⓪">XRSession</a></code> <var>session</var>, the user agent MUST run the following steps:</p>
+    <ol>
+     <li data-md>
+      <p>For each <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image①⓪">tracked image</a> <var>image</var> in <var>session</var>’s <a data-link-type="dfn" href="#xrsession-list-of-tracked-images" id="ref-for-xrsession-list-of-tracked-images①">list of tracked images</a>, using the current device tracking state of <var>image</var> for <var>frame</var>:</p>
+      <dl>
+       <dt data-md>If the XR device has no tracking information for <var>image</var>:
+       <dd data-md>
+        <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state⑤">image tracking state</a> to <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked④">"untracked"</a></code>.</p>
+       <dt data-md>Otherwise:
+       <dd data-md>
+        <ol>
+         <li data-md>
+          <p>If <var>image</var>’s <a data-link-type="dfn" href="#image-was-detected" id="ref-for-image-was-detected①">image was detected</a> flag is <code>false</code>, and if the <a data-link-type="dfn" href="#suitable-for-tracking" id="ref-for-suitable-for-tracking②">suitable for tracking</a> algorithm for <var>image</var> returns <code>false</code>, continue to the next entry.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-was-detected" id="ref-for-image-was-detected②">image was detected</a> attribute to <code>true</code>.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state⑥">image tracking state</a> to <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-tracked" id="ref-for-dom-xrimagetrackingstate-tracked④">"tracked"</a></code> if the image is actively being tracked, or to <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-emulated" id="ref-for-dom-xrimagetrackingstate-emulated④">"emulated"</a></code> if the position is inferred based on previous observations.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#image-space" id="ref-for-image-space④">image space</a> based on the XR device’s estimate of the image’s pose.</p>
+         <li data-md>
+          <p>Set <var>image</var>’s <a data-link-type="dfn" href="#measured-width-in-meters" id="ref-for-measured-width-in-meters①">measured width in meters</a> based on the XR device’s estimated physical width if available, or set to zero if there is no available estimate.</p>
+        </ol>
+      </dl>
+    </ol>
+   </div>
+   <p>Applications can use the <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe②">XRFrame</a></code>’s <code class="idl"><a data-link-type="idl" href="#dom-xrframe-getimagetrackingresults" id="ref-for-dom-xrframe-getimagetrackingresults①">getImageTrackingResults()</a></code> method to <a data-link-type="dfn" href="#obtain-image-tracking-results" id="ref-for-obtain-image-tracking-results">obtain image tracking results</a> about the current state of tracked images in that frame.</p>
+<pre class="def highlight idl"><c- b>enum</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="enum" data-export id="enumdef-xrimagetrackingstate"><code><c- g>XRImageTrackingState</c-></code></dfn> {
+  <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackingState" data-dfn-type="enum-value" data-export id="dom-xrimagetrackingstate-untracked"><code><c- s>"untracked"</c-></code></dfn>,
+  <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackingState" data-dfn-type="enum-value" data-export id="dom-xrimagetrackingstate-tracked"><code><c- s>"tracked"</c-></code></dfn>,
+  <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackingState" data-dfn-type="enum-value" data-export id="dom-xrimagetrackingstate-emulated"><code><c- s>"emulated"</c-></code></dfn>,
+};
+
+[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext" id="ref-for-SecureContext"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed" id="ref-for-Exposed"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <dfn class="dfn-paneled idl-code" data-dfn-type="interface" data-export id="xrimagetrackingresult"><code><c- g>XRImageTrackingResult</c-></code></dfn> {
+  [<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject" id="ref-for-SameObject"><c- g>SameObject</c-></a>] <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="https://immersive-web.github.io/webxr/#xrspace" id="ref-for-xrspace②"><c- n>XRSpace</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackingResult" data-dfn-type="attribute" data-export data-readonly data-type="XRSpace" id="dom-xrimagetrackingresult-imagespace"><code><c- g>imageSpace</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-long" id="ref-for-idl-unsigned-long"><c- b>unsigned</c-> <c- b>long</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackingResult" data-dfn-type="attribute" data-export data-readonly data-type="unsigned long" id="dom-xrimagetrackingresult-index"><code><c- g>index</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#enumdef-xrimagetrackingstate" id="ref-for-enumdef-xrimagetrackingstate①"><c- n>XRImageTrackingState</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackingResult" data-dfn-type="attribute" data-export data-readonly data-type="XRImageTrackingState" id="dom-xrimagetrackingresult-trackingstate"><code><c- g>trackingState</c-></code></dfn>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float" id="ref-for-idl-float①"><c- b>float</c-></a> <dfn class="dfn-paneled idl-code" data-dfn-for="XRImageTrackingResult" data-dfn-type="attribute" data-export data-readonly data-type="float" id="dom-xrimagetrackingresult-measuredwidthinmeters"><code><c- g>measuredWidthInMeters</c-></code></dfn>;
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe③"><c- g>XRFrame</c-></a> {
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-frozen-array" id="ref-for-idl-frozen-array①"><c- b>FrozenArray</c-></a>&lt;<a data-link-type="idl-name" href="#xrimagetrackingresult" id="ref-for-xrimagetrackingresult"><c- n>XRImageTrackingResult</c-></a>> <dfn class="dfn-paneled idl-code" data-dfn-for="XRFrame" data-dfn-type="method" data-export data-lt="getImageTrackingResults()" id="dom-xrframe-getimagetrackingresults"><code><c- g>getImageTrackingResults</c-></code></dfn>();
+};
+</pre>
+   <div class="algorithm" data-algorithm="obtain-image-tracking-results">
+    <p>In order to <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="obtain-image-tracking-results">obtain image tracking results</dfn> for an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe④">XRFrame</a></code> <var>frame</var>, the user agent MUST run the following steps:</p>
+    <ol>
+     <li data-md>
+      <p>Let <var>session</var> be <var>frame</var>’s <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#dom-xrframe-session" id="ref-for-dom-xrframe-session">session</a></code> object.</p>
+     <li data-md>
+      <p>Let <var>results</var> be an empty list.</p>
+     <li data-md>
+      <p>For each <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image①①">tracked image</a> <var>image</var> in <var>session</var>’s <a data-link-type="dfn" href="#xrsession-list-of-tracked-images" id="ref-for-xrsession-list-of-tracked-images②">list of tracked images</a>:</p>
+      <ol>
+       <li data-md>
+        <p>If <var>image</var>’s <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state⑦">image tracking state</a> is <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked⑤">"untracked"</a></code>, continue to the next entry.</p>
+       <li data-md>
+        <p>Let <var>result</var> be an <code class="idl"><a data-link-type="idl" href="#xrimagetrackingresult" id="ref-for-xrimagetrackingresult①">XRImageTrackingResult</a></code></p>
+       <li data-md>
+        <p>Set <var>result</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingresult-imagespace" id="ref-for-dom-xrimagetrackingresult-imagespace">imageSpace</a></code> to <var>image</var>’s <a data-link-type="dfn" href="#image-space" id="ref-for-image-space⑤">image space</a>.</p>
+       <li data-md>
+        <p>Set <var>result</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingresult-index" id="ref-for-dom-xrimagetrackingresult-index">index</a></code> to <var>image</var>’s <a data-link-type="dfn" href="#image-index" id="ref-for-image-index①">image index</a></p>
+       <li data-md>
+        <p>Set <var>result</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingresult-trackingstate" id="ref-for-dom-xrimagetrackingresult-trackingstate">trackingState</a></code> to <var>image</var>’s <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state⑧">image tracking state</a></p>
+       <li data-md>
+        <p>Set <var>result</var>’s <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingresult-measuredwidthinmeters" id="ref-for-dom-xrimagetrackingresult-measuredwidthinmeters">measuredWidthInMeters</a></code> to <var>image</var>’s <a data-link-type="dfn" href="#measured-width-in-meters" id="ref-for-measured-width-in-meters②">measured width in meters</a></p>
+       <li data-md>
+        <p>Append <var>result</var> to <var>results</var>.</p>
+      </ol>
+     <li data-md>
+      <p>Return a new <code class="idl"><a data-link-type="idl" href="https://webidl.spec.whatwg.org/#idl-frozen-array" id="ref-for-idl-frozen-array②">FrozenArray</a></code> containing the elements of <var>results</var>.</p>
+    </ol>
+   </div>
+   <p class="note" role="note"><span class="marker">NOTE:</span> The image tracking results only contains information about images with an <a data-link-type="dfn" href="#image-tracking-state" id="ref-for-image-tracking-state⑨">image tracking state</a> of <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-tracked" id="ref-for-dom-xrimagetrackingstate-tracked⑤">"tracked"</a></code> or <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-emulated" id="ref-for-dom-xrimagetrackingstate-emulated⑤">"emulated"</a></code>. <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingstate-untracked" id="ref-for-dom-xrimagetrackingstate-untracked⑥">"untracked"</a></code> images are omitted from the returned array. Applications can use the <code class="idl"><a data-link-type="idl" href="#dom-xrimagetrackingresult-index" id="ref-for-dom-xrimagetrackingresult-index①">index</a></code> value to associate each result with the underlying image.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> Each tracked image can appear at most once in the tracking results. If multiple copies of the same image exist in the user’s environment, the device can choose an arbitrary instance to report a pose, and this choice can change for future <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe⑤">XRFrame</a></code>s.</p>
+   <h2 class="heading settled" data-level="4" id="security"><span class="secno">4. </span><span class="content">Security, Privacy, and Comfort Considerations</span><a class="self-link" href="#security"></a></h2>
+   <h3 class="heading settled" data-level="4.1" id="sensitive-information"><span class="secno">4.1. </span><span class="content">Sensitive Information</span><a class="self-link" href="#sensitive-information"></a></h3>
+   <p>In the context of image tracking, <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="sensitive-image-information">sensitive image information</dfn> includes, but is not limited to, information about the existence and position of specific real-world images in the user’s environment.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> For example, a hostile application might try to detect large-denomination bank notes or other valuable items, specific book covers of titles that may be banned or restricted in certain jurisdictions, or other information that the user may be unwilling to share.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> The goal of this API is to provide a reasonable amount of protection against disclosing such information, providing a tradeoff where it provides useful functionality with reduced risk compared to full camera access by the application. If an application were to ask for and receive full camera access, it could scan for all of this sensitive information, and there would be no way for the UA to mitigate the risks.</p>
+   <h3 class="heading settled" data-level="4.2" id="protected-functionality"><span class="secno">4.2. </span><span class="content">Protected functionality</span><a class="self-link" href="#protected-functionality"></a></h3>
+   <p>The <a data-link-type="dfn" href="#sensitive-image-information" id="ref-for-sensitive-image-information">sensitive image information</a> exposed by the API has the following threat profiles and necessary protections:</p>
+   <h4 class="heading settled" data-level="4.2.1" id="protect-image-presence"><span class="secno">4.2.1. </span><span class="content">Presence of images</span><a class="self-link" href="#protect-image-presence"></a></h4>
+   <div class="algorithm" data-algorithm="suitable-for-tracking">
+    <p>In order to check if a <a data-link-type="dfn" href="#tracked-image" id="ref-for-tracked-image①②">tracked image</a> <var>image</var> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="suitable-for-tracking">suitable for tracking</dfn> for an <code class="idl"><a data-link-type="idl" href="https://immersive-web.github.io/webxr/#xrframe" id="ref-for-xrframe⑥">XRFrame</a></code> <var>frame</var>, the user agent MUST run the following steps:</p>
+    <ol>
+     <li data-md>
+      <p>If <var>image</var> is considered unsuitable for tracking due to device or UA limitations, return <code>false</code>.</p>
+     <li data-md>
+      <p>If <var>image</var> is not currently being actively tracked by the XR device in <var>frame</var>, return <code>false</code>.</p>
+     <li data-md>
+      <p>If <var>image</var>’s current pose indicates it’s outside the user’s central field of view, return <code>false</code>.</p>
+     <li data-md>
+      <p>If <var>image</var>’s current pose indicates that the image’s angular size is too small for it to be prominently visible, return <code>false</code>.</p>
+     <li data-md>
+      <p>Return <code>true</code>.</p>
+    </ol>
+   </div>
+   <p>The goal of this algorithm is that the image MUST fill a substantial fraction of the user’s central field of view (for a head-mounted device) or camera view (for a handheld screen-based device) to be initially detected, and MUST have an angular area large enough to indicate an intent that the user is actively focusing on the image and is aware of it.</p>
+   <p>The UA MUST NOT initiate tracking for distant or small images, or images that only appear in peripheral vision.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> The UA’s detailed criteria for initiating tracking are left to the UA’s discretion and depend on the device and tracking system.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> For example, a smartphone AR system may require that the image fills at least 25% of the camera frame’s area for initial detection.</p>
+   <p class="note" role="note"><span class="marker">NOTE:</span> This limitation only applies to initial detection. Once an image has been determined to be suitable for tracking, the UA is free to continue reporting poses for that image even if it is distant or partially occluded.</p>
+   <h2 class="heading settled" data-level="5" id="ack"><span class="secno">5. </span><span class="content">Acknowledgements</span><a class="self-link" href="#ack"></a></h2>
+   <p>The following individuals have contributed to the design of the WebXR Marker Tracking specification:</p>
+   <ul>
+    <li data-md>
+     <p><a href="mailto:bajones@google.com">Brandon Jones</a> (Google)</p>
+    <li data-md>
+     <p>Alex Turner (Microsoft)</p>
+   </ul>
+  </main>
+  <div data-fill-with="conformance">
+   <h2 class="heading no-num no-ref settled" id="w3c-conformance"><span class="content">Conformance</span><a class="self-link" href="#w3c-conformance"></a></h2>
+   <h3 class="heading no-num no-ref settled" id="w3c-conventions"><span class="content">Document conventions</span><a class="self-link" href="#w3c-conventions"></a></h3>
+   <p>Conformance requirements are expressed
+    with a combination of descriptive assertions
+    and RFC 2119 terminology.
+    The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “MAY”, and “OPTIONAL”
+    in the normative parts of this document
+    are to be interpreted as described in RFC 2119.
+    However, for readability,
+    these words do not appear in all uppercase letters in this specification.
+
+    </p>
+   <p>All of the text of this specification is normative
+    except sections explicitly marked as non-normative, examples, and notes. <a data-link-type="biblio" href="#biblio-rfc2119" title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</a>
+
+    </p>
+   <p>Examples in this specification are introduced with the words “for example”
+    or are set apart from the normative text
+    with <code>class="example"</code>,
+    like this:
+
+    </p>
+   <div class="example" id="w3c-example">
+    <a class="self-link" href="#w3c-example"></a>
+        
+    <p>This is an example of an informative example.
+    </p>
+   </div>
+   <p>Informative notes begin with the word “Note”
+    and are set apart from the normative text
+    with <code>class="note"</code>,
+    like this:
+
+    </p>
+   <p class="note" role="note">Note, this is an informative note.</p>
+  </div>
+  <script src="https://www.w3.org/scripts/TR/2021/fixup.js"></script>
+  <h2 class="heading no-num no-ref settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
+  <ul class="index">
+   <li><a href="#dom-xrimagetrackingstate-emulated">"emulated"</a><span>, in § 3.3</span>
+   <li><a href="#dom-xrsession-getimagetrackability">getImageTrackability()</a><span>, in § 3.2</span>
+   <li><a href="#dom-xrframe-getimagetrackingresults">getImageTrackingResults()</a><span>, in § 3.3</span>
+   <li><a href="#dom-xrtrackedimageinit-image">image</a><span>, in § 3.1</span>
+   <li><a href="#image-index">image index</a><span>, in § 2.1</span>
+   <li><a href="#image-space">image space</a><span>, in § 2.1</span>
+   <li><a href="#dom-xrimagetrackingresult-imagespace">imageSpace</a><span>, in § 3.3</span>
+   <li><a href="#image-trackable">image trackable</a><span>, in § 2.1</span>
+   <li><a href="#image-tracking-state">image tracking state</a><span>, in § 2.1</span>
+   <li><a href="#image-was-detected">image was detected</a><span>, in § 2.1</span>
+   <li><a href="#dom-xrimagetrackingresult-index">index</a><span>, in § 3.3</span>
+   <li><a href="#xrsession-list-of-tracked-images">list of tracked images</a><span>, in § 3.2</span>
+   <li><a href="#feature-descriptor-marker-tracking">marker-tracking</a><span>, in § 3.1</span>
+   <li><a href="#measured-width-in-meters">measured width in meters</a><span>, in § 2.1</span>
+   <li><a href="#dom-xrimagetrackingresult-measuredwidthinmeters">measuredWidthInMeters</a><span>, in § 3.3</span>
+   <li><a href="#obtain-image-trackability">obtain image trackability</a><span>, in § 3.2</span>
+   <li><a href="#obtain-image-tracking-results">obtain image tracking results</a><span>, in § 3.3</span>
+   <li><a href="#sensitive-image-information">sensitive image information</a><span>, in § 4.1</span>
+   <li><a href="#set-up-tracked-images">set up tracked images</a><span>, in § 3.1</span>
+   <li><a href="#suitable-for-tracking">suitable for tracking</a><span>, in § 4.2.1</span>
+   <li><a href="#dom-xrimagetrackability-trackable">"trackable"</a><span>, in § 3.2</span>
+   <li><a href="#dom-xrimagetrackingstate-tracked">"tracked"</a><span>, in § 3.3</span>
+   <li><a href="#tracked-image">tracked image</a><span>, in § 2.1</span>
+   <li><a href="#dom-xrsessioninit-trackedimages">trackedImages</a><span>, in § 3.1</span>
+   <li><a href="#dom-xrimagetrackingresult-trackingstate">trackingState</a><span>, in § 3.3</span>
+   <li><a href="#dom-xrimagetrackability-untrackable">"untrackable"</a><span>, in § 3.2</span>
+   <li><a href="#dom-xrimagetrackingstate-untracked">"untracked"</a><span>, in § 3.3</span>
+   <li><a href="#update-tracked-images">update tracked images</a><span>, in § 3.3</span>
+   <li><a href="#dom-xrtrackedimageinit-widthinmeters">widthInMeters</a><span>, in § 3.1</span>
+   <li><a href="#enumdef-xrimagetrackability">XRImageTrackability</a><span>, in § 3.2</span>
+   <li><a href="#xrimagetrackingresult">XRImageTrackingResult</a><span>, in § 3.3</span>
+   <li><a href="#enumdef-xrimagetrackingstate">XRImageTrackingState</a><span>, in § 3.3</span>
+   <li><a href="#dictdef-xrtrackedimageinit">XRTrackedImageInit</a><span>, in § 3.1</span>
+  </ul>
+  <h3 class="heading no-num no-ref settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
+  <ul class="index">
+   <li>
+    <a data-link-type="biblio">[HTML]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="478bb3aa">ImageBitmap</span>
+     <li><span class="dfn-paneled" id="a72449dd">in parallel</span>
+     <li><span class="dfn-paneled" id="9a517a7d">queue a task</span>
+     <li><span class="dfn-paneled" id="5991ccfb">relevant realm</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[INFRA]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="ae8def21">contain</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WEBIDL]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="889e932f">Exposed</span>
+     <li><span class="dfn-paneled" id="dcf5fafa">FrozenArray</span>
+     <li><span class="dfn-paneled" id="bdbd19d1">Promise</span>
+     <li><span class="dfn-paneled" id="a5c91173">SameObject</span>
+     <li><span class="dfn-paneled" id="b75bb3bd">SecureContext</span>
+     <li><span class="dfn-paneled" id="dacde8b5">a new promise</span>
+     <li><span class="dfn-paneled" id="eec1be2d">float</span>
+     <li><span class="dfn-paneled" id="3b90bdcd">resolve</span>
+     <li><span class="dfn-paneled" id="9cce47fd">sequence</span>
+     <li><span class="dfn-paneled" id="e97a9688">unsigned long</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WEBXR]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="7a030114">XRFrame</span>
+     <li><span class="dfn-paneled" id="b23556e5">XRSession</span>
+     <li><span class="dfn-paneled" id="881a9e6b">XRSessionInit</span>
+     <li><span class="dfn-paneled" id="0b566548">XRSpace</span>
+     <li><span class="dfn-paneled" id="ffba969d">emulatedPosition</span>
+     <li><span class="dfn-paneled" id="a9d2b73a">getPose(space, baseSpace)</span>
+     <li><span class="dfn-paneled" id="a42ed5f1">optionalFeatures</span>
+     <li><span class="dfn-paneled" id="dc9c48d6">requestSession(mode)</span>
+     <li><span class="dfn-paneled" id="f3872913">requiredFeatures</span>
+     <li><span class="dfn-paneled" id="7c7eccf9">session</span>
+    </ul>
+  </ul>
+  <h2 class="heading no-num no-ref settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="heading no-num no-ref settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-html">[HTML]
+   <dd>Anne van Kesteren; et al. <a href="https://html.spec.whatwg.org/multipage/"><cite>HTML Standard</cite></a>. Living Standard. URL: <a href="https://html.spec.whatwg.org/multipage/">https://html.spec.whatwg.org/multipage/</a>
+   <dt id="biblio-infra">[INFRA]
+   <dd>Anne van Kesteren; Domenic Denicola. <a href="https://infra.spec.whatwg.org/"><cite>Infra Standard</cite></a>. Living Standard. URL: <a href="https://infra.spec.whatwg.org/">https://infra.spec.whatwg.org/</a>
+   <dt id="biblio-rfc2119">[RFC2119]
+   <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
+   <dt id="biblio-webidl">[WEBIDL]
+   <dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
+   <dt id="biblio-webxr">[WEBXR]
+   <dd>Brandon Jones; Manish Goregaokar; Rik Cabanier. <a href="https://immersive-web.github.io/webxr/"><cite>WebXR Device API</cite></a>. URL: <a href="https://immersive-web.github.io/webxr/">https://immersive-web.github.io/webxr/</a>
+  </dl>
+  <h2 class="heading no-num no-ref settled" id="idl-index"><span class="content">IDL Index</span><a class="self-link" href="#idl-index"></a></h2>
+<pre class="def highlight idl"><c- b>dictionary</c-> <a href="#dictdef-xrtrackedimageinit"><code><c- g>XRTrackedImageInit</c-></code></a> {
+  <c- b>required</c-> <a data-link-type="idl-name" href="https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagebitmap"><c- n>ImageBitmap</c-></a> <a data-type="ImageBitmap" href="#dom-xrtrackedimageinit-image"><code><c- g>image</c-></code></a>;
+  <c- b>required</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float"><c- b>float</c-></a> <a data-type="float" href="#dom-xrtrackedimageinit-widthinmeters"><code><c- g>widthInMeters</c-></code></a>;
+};
+
+<c- b>partial</c-> <c- b>dictionary</c-> <a class="idl-code" data-link-type="dictionary" href="https://immersive-web.github.io/webxr/#dictdef-xrsessioninit"><c- g>XRSessionInit</c-></a> {
+  <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#idl-sequence"><c- b>sequence</c-></a>&lt;<a data-link-type="idl-name" href="#dictdef-xrtrackedimageinit"><c- n>XRTrackedImageInit</c-></a>> <a data-type="sequence<XRTrackedImageInit>" href="#dom-xrsessioninit-trackedimages"><code><c- g>trackedImages</c-></code></a>;
+};
+
+<c- b>enum</c-> <a href="#enumdef-xrimagetrackability"><code><c- g>XRImageTrackability</c-></code></a> {
+  <a href="#dom-xrimagetrackability-untrackable"><code><c- s>"untrackable"</c-></code></a>,
+  <a href="#dom-xrimagetrackability-trackable"><code><c- s>"trackable"</c-></code></a>,
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrsession"><c- g>XRSession</c-></a> {
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-promise"><c- b>Promise</c-></a>&lt;<a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-frozen-array"><c- b>FrozenArray</c-></a>&lt;<a data-link-type="idl-name" href="#enumdef-xrimagetrackability"><c- n>XRImageTrackability</c-></a>>> <a href="#dom-xrsession-getimagetrackability"><code><c- g>getImageTrackability</c-></code></a>();
+};
+
+<c- b>enum</c-> <a href="#enumdef-xrimagetrackingstate"><code><c- g>XRImageTrackingState</c-></code></a> {
+  <a href="#dom-xrimagetrackingstate-untracked"><code><c- s>"untracked"</c-></code></a>,
+  <a href="#dom-xrimagetrackingstate-tracked"><code><c- s>"tracked"</c-></code></a>,
+  <a href="#dom-xrimagetrackingstate-emulated"><code><c- s>"emulated"</c-></code></a>,
+};
+
+[<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SecureContext"><c- g>SecureContext</c-></a>, <a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#Exposed"><c- g>Exposed</c-></a>=<c- n>Window</c->]
+<c- b>interface</c-> <a href="#xrimagetrackingresult"><code><c- g>XRImageTrackingResult</c-></code></a> {
+  [<a class="idl-code" data-link-type="extended-attribute" href="https://webidl.spec.whatwg.org/#SameObject"><c- g>SameObject</c-></a>] <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="https://immersive-web.github.io/webxr/#xrspace"><c- n>XRSpace</c-></a> <a data-readonly data-type="XRSpace" href="#dom-xrimagetrackingresult-imagespace"><code><c- g>imageSpace</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-unsigned-long"><c- b>unsigned</c-> <c- b>long</c-></a> <a data-readonly data-type="unsigned long" href="#dom-xrimagetrackingresult-index"><code><c- g>index</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a data-link-type="idl-name" href="#enumdef-xrimagetrackingstate"><c- n>XRImageTrackingState</c-></a> <a data-readonly data-type="XRImageTrackingState" href="#dom-xrimagetrackingresult-trackingstate"><code><c- g>trackingState</c-></code></a>;
+  <c- b>readonly</c-> <c- b>attribute</c-> <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-float"><c- b>float</c-></a> <a data-readonly data-type="float" href="#dom-xrimagetrackingresult-measuredwidthinmeters"><code><c- g>measuredWidthInMeters</c-></code></a>;
+};
+
+<c- b>partial</c-> <c- b>interface</c-> <a class="idl-code" data-link-type="interface" href="https://immersive-web.github.io/webxr/#xrframe"><c- g>XRFrame</c-></a> {
+  <a class="idl-code" data-link-type="interface" href="https://webidl.spec.whatwg.org/#idl-frozen-array"><c- b>FrozenArray</c-></a>&lt;<a data-link-type="idl-name" href="#xrimagetrackingresult"><c- n>XRImageTrackingResult</c-></a>> <a href="#dom-xrframe-getimagetrackingresults"><code><c- g>getImageTrackingResults</c-></code></a>();
+};
+
+</pre>
+<script>/* Boilerplate: script-dom-helper */
+"use strict";
+function query(sel) { return document.querySelector(sel); }
+
+function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
+
+function iter(obj) {
+	if(!obj) return [];
+	var it = obj[Symbol.iterator];
+	if(it) return it;
+	return Object.entries(obj);
+}
+
+function mk(tagname, attrs, ...children) {
+	const el = document.createElement(tagname);
+	for(const [k,v] of iter(attrs)) {
+		if(k.slice(0,3) == "_on") {
+			const eventName = k.slice(3);
+			el.addEventListener(eventName, v);
+		} else if(k[0] == "_") {
+			// property, not attribute
+			el[k.slice(1)] = v;
+		} else {
+			if(v === false || v == null) {
+        continue;
+      } else if(v === true) {
+        el.setAttribute(k, "");
+        continue;
+      } else {
+  			el.setAttribute(k, v);
+      }
+		}
+	}
+	append(el, children);
+	return el;
+}
+
+/* Create shortcuts for every known HTML element */
+[
+  "a",
+  "abbr",
+  "acronym",
+  "address",
+  "applet",
+  "area",
+  "article",
+  "aside",
+  "audio",
+  "b",
+  "base",
+  "basefont",
+  "bdo",
+  "big",
+  "blockquote",
+  "body",
+  "br",
+  "button",
+  "canvas",
+  "caption",
+  "center",
+  "cite",
+  "code",
+  "col",
+  "colgroup",
+  "datalist",
+  "dd",
+  "del",
+  "details",
+  "dfn",
+  "dialog",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "embed",
+  "fieldset",
+  "figcaption",
+  "figure",
+  "font",
+  "footer",
+  "form",
+  "frame",
+  "frameset",
+  "head",
+  "header",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "html",
+  "i",
+  "iframe",
+  "img",
+  "input",
+  "ins",
+  "kbd",
+  "label",
+  "legend",
+  "li",
+  "link",
+  "main",
+  "map",
+  "mark",
+  "meta",
+  "meter",
+  "nav",
+  "nobr",
+  "noscript",
+  "object",
+  "ol",
+  "optgroup",
+  "option",
+  "output",
+  "p",
+  "param",
+  "pre",
+  "progress",
+  "q",
+  "s",
+  "samp",
+  "script",
+  "section",
+  "select",
+  "small",
+  "source",
+  "span",
+  "strike",
+  "strong",
+  "style",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "template",
+  "textarea",
+  "tfoot",
+  "th",
+  "thead",
+  "time",
+  "title",
+  "tr",
+  "u",
+  "ul",
+  "var",
+  "video",
+  "wbr",
+  "xmp",
+].forEach(tagname=>{
+	mk[tagname] = (...args) => mk(tagname, ...args);
+});
+
+function* nodesFromChildList(children) {
+	for(const child of children.flat(Infinity)) {
+		if(child instanceof Node) {
+			yield child;
+		} else {
+			yield new Text(child);
+		}
+	}
+}
+function append(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		if(el instanceof Node) el.appendChild(child);
+		else el.push(child);
+	}
+	return el;
+}
+
+function insertAfter(el, ...children) {
+	for(const child of nodesFromChildList(children)) {
+		el.parentNode.insertBefore(child, el.nextSibling);
+	}
+	return el;
+}
+
+function clearContents(el) {
+	el.innerHTML = "";
+	return el;
+}
+
+function parseHTML(markup) {
+	if(markup.toLowerCase().trim().indexOf('<!doctype') === 0) {
+		const doc = document.implementation.createHTMLDocument("");
+		doc.documentElement.innerHTML = markup;
+		return doc;
+	} else {
+		const el = mk.template({});
+		el.innerHTML = markup;
+		return el.content;
+	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"0b566548": {"dfnID":"0b566548","dfnText":"XRSpace","external":true,"refSections":[{"refs":[{"id":"ref-for-xrspace"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-xrspace\u2460"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-xrspace\u2461"}],"title":"3.3. XRFrame"}],"url":"https://immersive-web.github.io/webxr/#xrspace"},
+"3b90bdcd": {"dfnID":"3b90bdcd","dfnText":"resolve","external":true,"refSections":[{"refs":[{"id":"ref-for-resolve"}],"title":"3.2. XRSession"}],"url":"https://webidl.spec.whatwg.org/#resolve"},
+"478bb3aa": {"dfnID":"478bb3aa","dfnText":"ImageBitmap","external":true,"refSections":[{"refs":[{"id":"ref-for-imagebitmap"},{"id":"ref-for-imagebitmap\u2460"}],"title":"3.1. XRSessionInit"}],"url":"https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagebitmap"},
+"5991ccfb": {"dfnID":"5991ccfb","dfnText":"relevant realm","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-relevant-realm"}],"title":"3.2. XRSession"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-realm"},
+"7a030114": {"dfnID":"7a030114","dfnText":"XRFrame","external":true,"refSections":[{"refs":[{"id":"ref-for-xrframe"}],"title":"3. WebXR Device API Integration"},{"refs":[{"id":"ref-for-xrframe\u2460"},{"id":"ref-for-xrframe\u2461"},{"id":"ref-for-xrframe\u2462"},{"id":"ref-for-xrframe\u2463"},{"id":"ref-for-xrframe\u2464"}],"title":"3.3. XRFrame"},{"refs":[{"id":"ref-for-xrframe\u2465"}],"title":"4.2.1. Presence of images"}],"url":"https://immersive-web.github.io/webxr/#xrframe"},
+"7c7eccf9": {"dfnID":"7c7eccf9","dfnText":"session","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrframe-session"}],"title":"3.3. XRFrame"}],"url":"https://immersive-web.github.io/webxr/#dom-xrframe-session"},
+"881a9e6b": {"dfnID":"881a9e6b","dfnText":"XRSessionInit","external":true,"refSections":[{"refs":[{"id":"ref-for-dictdef-xrsessioninit"}],"title":"3. WebXR Device API Integration"},{"refs":[{"id":"ref-for-dictdef-xrsessioninit\u2460"},{"id":"ref-for-dictdef-xrsessioninit\u2461"},{"id":"ref-for-dictdef-xrsessioninit\u2462"}],"title":"3.1. XRSessionInit"}],"url":"https://immersive-web.github.io/webxr/#dictdef-xrsessioninit"},
+"889e932f": {"dfnID":"889e932f","dfnText":"Exposed","external":true,"refSections":[{"refs":[{"id":"ref-for-Exposed"}],"title":"3.3. XRFrame"}],"url":"https://webidl.spec.whatwg.org/#Exposed"},
+"9a517a7d": {"dfnID":"9a517a7d","dfnText":"queue a task","external":true,"refSections":[{"refs":[{"id":"ref-for-queue-a-task"}],"title":"3.2. XRSession"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-task"},
+"9cce47fd": {"dfnID":"9cce47fd","dfnText":"sequence","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-sequence"}],"title":"3.1. XRSessionInit"}],"url":"https://webidl.spec.whatwg.org/#idl-sequence"},
+"a42ed5f1": {"dfnID":"a42ed5f1","dfnText":"optionalFeatures","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrsessioninit-optionalfeatures"}],"title":"3.1. XRSessionInit"}],"url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures"},
+"a5c91173": {"dfnID":"a5c91173","dfnText":"SameObject","external":true,"refSections":[{"refs":[{"id":"ref-for-SameObject"}],"title":"3.3. XRFrame"}],"url":"https://webidl.spec.whatwg.org/#SameObject"},
+"a72449dd": {"dfnID":"a72449dd","dfnText":"in parallel","external":true,"refSections":[{"refs":[{"id":"ref-for-in-parallel"}],"title":"3.2. XRSession"}],"url":"https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel"},
+"a9d2b73a": {"dfnID":"a9d2b73a","dfnText":"getPose(space, baseSpace)","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrframe-getpose"},{"id":"ref-for-dom-xrframe-getpose\u2460"}],"title":"2.1. Tracked Image"}],"url":"https://immersive-web.github.io/webxr/#dom-xrframe-getpose"},
+"ae8def21": {"dfnID":"ae8def21","dfnText":"contain","external":true,"refSections":[{"refs":[{"id":"ref-for-list-contain"}],"title":"3.1. XRSessionInit"}],"url":"https://infra.spec.whatwg.org/#list-contain"},
+"b23556e5": {"dfnID":"b23556e5","dfnText":"XRSession","external":true,"refSections":[{"refs":[{"id":"ref-for-xrsession"},{"id":"ref-for-xrsession\u2460"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-xrsession\u2461"}],"title":"3. WebXR Device API Integration"},{"refs":[{"id":"ref-for-xrsession\u2462"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-xrsession\u2463"},{"id":"ref-for-xrsession\u2464"},{"id":"ref-for-xrsession\u2465"},{"id":"ref-for-xrsession\u2466"},{"id":"ref-for-xrsession\u2467"}],"title":"3.2. XRSession"},{"refs":[{"id":"ref-for-xrsession\u2468"},{"id":"ref-for-xrsession\u2460\u24ea"}],"title":"3.3. XRFrame"}],"url":"https://immersive-web.github.io/webxr/#xrsession"},
+"b75bb3bd": {"dfnID":"b75bb3bd","dfnText":"SecureContext","external":true,"refSections":[{"refs":[{"id":"ref-for-SecureContext"}],"title":"3.3. XRFrame"}],"url":"https://webidl.spec.whatwg.org/#SecureContext"},
+"bdbd19d1": {"dfnID":"bdbd19d1","dfnText":"Promise","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-promise"}],"title":"3.2. XRSession"}],"url":"https://webidl.spec.whatwg.org/#idl-promise"},
+"dacde8b5": {"dfnID":"dacde8b5","dfnText":"a new promise","external":true,"refSections":[{"refs":[{"id":"ref-for-a-new-promise"}],"title":"3.2. XRSession"}],"url":"https://webidl.spec.whatwg.org/#a-new-promise"},
+"dc9c48d6": {"dfnID":"dc9c48d6","dfnText":"requestSession(mode)","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrsystem-requestsession"}],"title":"3.1. XRSessionInit"}],"url":"https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession"},
+"dcf5fafa": {"dfnID":"dcf5fafa","dfnText":"FrozenArray","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-frozen-array"}],"title":"3.2. XRSession"},{"refs":[{"id":"ref-for-idl-frozen-array\u2460"},{"id":"ref-for-idl-frozen-array\u2461"}],"title":"3.3. XRFrame"}],"url":"https://webidl.spec.whatwg.org/#idl-frozen-array"},
+"dictdef-xrtrackedimageinit": {"dfnID":"dictdef-xrtrackedimageinit","dfnText":"XRTrackedImageInit","external":false,"refSections":[{"refs":[{"id":"ref-for-dictdef-xrtrackedimageinit"},{"id":"ref-for-dictdef-xrtrackedimageinit\u2460"}],"title":"3.1. XRSessionInit"}],"url":"#dictdef-xrtrackedimageinit"},
+"dom-xrframe-getimagetrackingresults": {"dfnID":"dom-xrframe-getimagetrackingresults","dfnText":"getImageTrackingResults","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrframe-getimagetrackingresults"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-dom-xrframe-getimagetrackingresults\u2460"}],"title":"3.3. XRFrame"}],"url":"#dom-xrframe-getimagetrackingresults"},
+"dom-xrimagetrackability-trackable": {"dfnID":"dom-xrimagetrackability-trackable","dfnText":"\"trackable\"","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackability-trackable"}],"title":"3.2. XRSession"}],"url":"#dom-xrimagetrackability-trackable"},
+"dom-xrimagetrackability-untrackable": {"dfnID":"dom-xrimagetrackability-untrackable","dfnText":"\"untrackable\"","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackability-untrackable"},{"id":"ref-for-dom-xrimagetrackability-untrackable\u2460"}],"title":"3.2. XRSession"}],"url":"#dom-xrimagetrackability-untrackable"},
+"dom-xrimagetrackingresult-imagespace": {"dfnID":"dom-xrimagetrackingresult-imagespace","dfnText":"imageSpace","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackingresult-imagespace"}],"title":"3.3. XRFrame"}],"url":"#dom-xrimagetrackingresult-imagespace"},
+"dom-xrimagetrackingresult-index": {"dfnID":"dom-xrimagetrackingresult-index","dfnText":"index","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackingresult-index"},{"id":"ref-for-dom-xrimagetrackingresult-index\u2460"}],"title":"3.3. XRFrame"}],"url":"#dom-xrimagetrackingresult-index"},
+"dom-xrimagetrackingresult-measuredwidthinmeters": {"dfnID":"dom-xrimagetrackingresult-measuredwidthinmeters","dfnText":"measuredWidthInMeters","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackingresult-measuredwidthinmeters"}],"title":"3.3. XRFrame"}],"url":"#dom-xrimagetrackingresult-measuredwidthinmeters"},
+"dom-xrimagetrackingresult-trackingstate": {"dfnID":"dom-xrimagetrackingresult-trackingstate","dfnText":"trackingState","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackingresult-trackingstate"}],"title":"3.3. XRFrame"}],"url":"#dom-xrimagetrackingresult-trackingstate"},
+"dom-xrimagetrackingstate-emulated": {"dfnID":"dom-xrimagetrackingstate-emulated","dfnText":"\"emulated\"","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackingstate-emulated"},{"id":"ref-for-dom-xrimagetrackingstate-emulated\u2460"},{"id":"ref-for-dom-xrimagetrackingstate-emulated\u2461"},{"id":"ref-for-dom-xrimagetrackingstate-emulated\u2462"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-dom-xrimagetrackingstate-emulated\u2463"},{"id":"ref-for-dom-xrimagetrackingstate-emulated\u2464"}],"title":"3.3. XRFrame"}],"url":"#dom-xrimagetrackingstate-emulated"},
+"dom-xrimagetrackingstate-tracked": {"dfnID":"dom-xrimagetrackingstate-tracked","dfnText":"\"tracked\"","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackingstate-tracked"},{"id":"ref-for-dom-xrimagetrackingstate-tracked\u2460"},{"id":"ref-for-dom-xrimagetrackingstate-tracked\u2461"},{"id":"ref-for-dom-xrimagetrackingstate-tracked\u2462"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-dom-xrimagetrackingstate-tracked\u2463"},{"id":"ref-for-dom-xrimagetrackingstate-tracked\u2464"}],"title":"3.3. XRFrame"}],"url":"#dom-xrimagetrackingstate-tracked"},
+"dom-xrimagetrackingstate-untracked": {"dfnID":"dom-xrimagetrackingstate-untracked","dfnText":"\"untracked\"","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrimagetrackingstate-untracked"},{"id":"ref-for-dom-xrimagetrackingstate-untracked\u2460"},{"id":"ref-for-dom-xrimagetrackingstate-untracked\u2461"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-dom-xrimagetrackingstate-untracked\u2462"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-dom-xrimagetrackingstate-untracked\u2463"},{"id":"ref-for-dom-xrimagetrackingstate-untracked\u2464"},{"id":"ref-for-dom-xrimagetrackingstate-untracked\u2465"}],"title":"3.3. XRFrame"}],"url":"#dom-xrimagetrackingstate-untracked"},
+"dom-xrsession-getimagetrackability": {"dfnID":"dom-xrsession-getimagetrackability","dfnText":"getImageTrackability","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrsession-getimagetrackability"}],"title":"3.2. XRSession"}],"url":"#dom-xrsession-getimagetrackability"},
+"dom-xrsessioninit-trackedimages": {"dfnID":"dom-xrsessioninit-trackedimages","dfnText":"trackedImages","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrsessioninit-trackedimages"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-dom-xrsessioninit-trackedimages\u2460"},{"id":"ref-for-dom-xrsessioninit-trackedimages\u2461"},{"id":"ref-for-dom-xrsessioninit-trackedimages\u2462"},{"id":"ref-for-dom-xrsessioninit-trackedimages\u2463"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-dom-xrsessioninit-trackedimages\u2464"}],"title":"3.2. XRSession"}],"url":"#dom-xrsessioninit-trackedimages"},
+"dom-xrtrackedimageinit-image": {"dfnID":"dom-xrtrackedimageinit-image","dfnText":"image","external":false,"refSections":[],"url":"#dom-xrtrackedimageinit-image"},
+"dom-xrtrackedimageinit-widthinmeters": {"dfnID":"dom-xrtrackedimageinit-widthinmeters","dfnText":"widthInMeters","external":false,"refSections":[{"refs":[{"id":"ref-for-dom-xrtrackedimageinit-widthinmeters"}],"title":"3.1. XRSessionInit"}],"url":"#dom-xrtrackedimageinit-widthinmeters"},
+"e97a9688": {"dfnID":"e97a9688","dfnText":"unsigned long","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-unsigned-long"}],"title":"3.3. XRFrame"}],"url":"https://webidl.spec.whatwg.org/#idl-unsigned-long"},
+"eec1be2d": {"dfnID":"eec1be2d","dfnText":"float","external":true,"refSections":[{"refs":[{"id":"ref-for-idl-float"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-idl-float\u2460"}],"title":"3.3. XRFrame"}],"url":"https://webidl.spec.whatwg.org/#idl-float"},
+"enumdef-xrimagetrackability": {"dfnID":"enumdef-xrimagetrackability","dfnText":"XRImageTrackability","external":false,"refSections":[{"refs":[{"id":"ref-for-enumdef-xrimagetrackability"},{"id":"ref-for-enumdef-xrimagetrackability\u2460"},{"id":"ref-for-enumdef-xrimagetrackability\u2461"}],"title":"3.2. XRSession"}],"url":"#enumdef-xrimagetrackability"},
+"enumdef-xrimagetrackingstate": {"dfnID":"enumdef-xrimagetrackingstate","dfnText":"XRImageTrackingState","external":false,"refSections":[{"refs":[{"id":"ref-for-enumdef-xrimagetrackingstate"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-enumdef-xrimagetrackingstate\u2460"}],"title":"3.3. XRFrame"}],"url":"#enumdef-xrimagetrackingstate"},
+"f3872913": {"dfnID":"f3872913","dfnText":"requiredFeatures","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrsessioninit-requiredfeatures"}],"title":"3.1. XRSessionInit"}],"url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures"},
+"feature-descriptor-marker-tracking": {"dfnID":"feature-descriptor-marker-tracking","dfnText":"marker-tracking","external":false,"refSections":[{"refs":[{"id":"ref-for-feature-descriptor-marker-tracking"}],"title":"3.2. XRSession"}],"url":"#feature-descriptor-marker-tracking"},
+"ffba969d": {"dfnID":"ffba969d","dfnText":"emulatedPosition","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-xrpose-emulatedposition"}],"title":"2.1. Tracked Image"}],"url":"https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition"},
+"image-index": {"dfnID":"image-index","dfnText":"image index","external":false,"refSections":[{"refs":[{"id":"ref-for-image-index"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-image-index\u2460"}],"title":"3.3. XRFrame"}],"url":"#image-index"},
+"image-space": {"dfnID":"image-space","dfnText":"image space","external":false,"refSections":[{"refs":[{"id":"ref-for-image-space"},{"id":"ref-for-image-space\u2460"},{"id":"ref-for-image-space\u2461"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-image-space\u2462"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-image-space\u2463"},{"id":"ref-for-image-space\u2464"}],"title":"3.3. XRFrame"}],"url":"#image-space"},
+"image-trackable": {"dfnID":"image-trackable","dfnText":"image trackable","external":false,"refSections":[{"refs":[{"id":"ref-for-image-trackable"},{"id":"ref-for-image-trackable\u2460"}],"title":"3.1. XRSessionInit"}],"url":"#image-trackable"},
+"image-tracking-state": {"dfnID":"image-tracking-state","dfnText":"image tracking state","external":false,"refSections":[{"refs":[{"id":"ref-for-image-tracking-state"},{"id":"ref-for-image-tracking-state\u2460"},{"id":"ref-for-image-tracking-state\u2461"},{"id":"ref-for-image-tracking-state\u2462"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-image-tracking-state\u2463"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-image-tracking-state\u2464"},{"id":"ref-for-image-tracking-state\u2465"},{"id":"ref-for-image-tracking-state\u2466"},{"id":"ref-for-image-tracking-state\u2467"},{"id":"ref-for-image-tracking-state\u2468"}],"title":"3.3. XRFrame"}],"url":"#image-tracking-state"},
+"image-was-detected": {"dfnID":"image-was-detected","dfnText":"image was detected","external":false,"refSections":[{"refs":[{"id":"ref-for-image-was-detected"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-image-was-detected\u2460"},{"id":"ref-for-image-was-detected\u2461"}],"title":"3.3. XRFrame"}],"url":"#image-was-detected"},
+"measured-width-in-meters": {"dfnID":"measured-width-in-meters","dfnText":"measured width in meters","external":false,"refSections":[{"refs":[{"id":"ref-for-measured-width-in-meters"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-measured-width-in-meters\u2460"},{"id":"ref-for-measured-width-in-meters\u2461"}],"title":"3.3. XRFrame"}],"url":"#measured-width-in-meters"},
+"obtain-image-trackability": {"dfnID":"obtain-image-trackability","dfnText":"obtain image trackability","external":false,"refSections":[{"refs":[{"id":"ref-for-obtain-image-trackability"}],"title":"3.2. XRSession"}],"url":"#obtain-image-trackability"},
+"obtain-image-tracking-results": {"dfnID":"obtain-image-tracking-results","dfnText":"obtain image tracking results","external":false,"refSections":[{"refs":[{"id":"ref-for-obtain-image-tracking-results"}],"title":"3.3. XRFrame"}],"url":"#obtain-image-tracking-results"},
+"sensitive-image-information": {"dfnID":"sensitive-image-information","dfnText":"sensitive image information","external":false,"refSections":[{"refs":[{"id":"ref-for-sensitive-image-information"}],"title":"4.2. Protected functionality"}],"url":"#sensitive-image-information"},
+"set-up-tracked-images": {"dfnID":"set-up-tracked-images","dfnText":"set up tracked images","external":false,"refSections":[{"refs":[{"id":"ref-for-set-up-tracked-images"}],"title":"3.1. XRSessionInit"}],"url":"#set-up-tracked-images"},
+"suitable-for-tracking": {"dfnID":"suitable-for-tracking","dfnText":"suitable for tracking","external":false,"refSections":[{"refs":[{"id":"ref-for-suitable-for-tracking"},{"id":"ref-for-suitable-for-tracking\u2460"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-suitable-for-tracking\u2461"}],"title":"3.3. XRFrame"}],"url":"#suitable-for-tracking"},
+"tracked-image": {"dfnID":"tracked-image","dfnText":"tracked image","external":false,"refSections":[{"refs":[{"id":"ref-for-tracked-image"},{"id":"ref-for-tracked-image\u2460"},{"id":"ref-for-tracked-image\u2461"},{"id":"ref-for-tracked-image\u2462"},{"id":"ref-for-tracked-image\u2463"},{"id":"ref-for-tracked-image\u2464"}],"title":"2.1. Tracked Image"},{"refs":[{"id":"ref-for-tracked-image\u2465"},{"id":"ref-for-tracked-image\u2466"},{"id":"ref-for-tracked-image\u2467"}],"title":"3.1. XRSessionInit"},{"refs":[{"id":"ref-for-tracked-image\u2468"}],"title":"3.2. XRSession"},{"refs":[{"id":"ref-for-tracked-image\u2460\u24ea"},{"id":"ref-for-tracked-image\u2460\u2460"}],"title":"3.3. XRFrame"},{"refs":[{"id":"ref-for-tracked-image\u2460\u2461"}],"title":"4.2.1. Presence of images"}],"url":"#tracked-image"},
+"update-tracked-images": {"dfnID":"update-tracked-images","dfnText":"update tracked images","external":false,"refSections":[{"refs":[{"id":"ref-for-update-tracked-images"}],"title":"3.3. XRFrame"}],"url":"#update-tracked-images"},
+"xrimagetrackingresult": {"dfnID":"xrimagetrackingresult","dfnText":"XRImageTrackingResult","external":false,"refSections":[{"refs":[{"id":"ref-for-xrimagetrackingresult"},{"id":"ref-for-xrimagetrackingresult\u2460"}],"title":"3.3. XRFrame"}],"url":"#xrimagetrackingresult"},
+"xrsession-list-of-tracked-images": {"dfnID":"xrsession-list-of-tracked-images","dfnText":"list of tracked images","external":false,"refSections":[{"refs":[{"id":"ref-for-xrsession-list-of-tracked-images"}],"title":"3.2. XRSession"},{"refs":[{"id":"ref-for-xrsession-list-of-tracked-images\u2460"},{"id":"ref-for-xrsession-list-of-tracked-images\u2461"}],"title":"3.3. XRFrame"}],"url":"#xrsession-list-of-tracked-images"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#dictdef-xrtrackedimageinit": {"displayText":"XRTrackedImageInit","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRTrackedImageInit","type":"dictionary","url":"#dictdef-xrtrackedimageinit"},
+"#dom-xrframe-getimagetrackingresults": {"displayText":"getImageTrackingResults()","export":true,"for_":["XRFrame"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"getImageTrackingResults()","type":"method","url":"#dom-xrframe-getimagetrackingresults"},
+"#dom-xrimagetrackability-trackable": {"displayText":"\"trackable\"","export":true,"for_":["XRImageTrackability"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"trackable\"","type":"enum-value","url":"#dom-xrimagetrackability-trackable"},
+"#dom-xrimagetrackability-untrackable": {"displayText":"\"untrackable\"","export":true,"for_":["XRImageTrackability"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"untrackable\"","type":"enum-value","url":"#dom-xrimagetrackability-untrackable"},
+"#dom-xrimagetrackingresult-imagespace": {"displayText":"imageSpace","export":true,"for_":["XRImageTrackingResult"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"imageSpace","type":"attribute","url":"#dom-xrimagetrackingresult-imagespace"},
+"#dom-xrimagetrackingresult-index": {"displayText":"index","export":true,"for_":["XRImageTrackingResult"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"index","type":"attribute","url":"#dom-xrimagetrackingresult-index"},
+"#dom-xrimagetrackingresult-measuredwidthinmeters": {"displayText":"measuredWidthInMeters","export":true,"for_":["XRImageTrackingResult"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"measuredWidthInMeters","type":"attribute","url":"#dom-xrimagetrackingresult-measuredwidthinmeters"},
+"#dom-xrimagetrackingresult-trackingstate": {"displayText":"trackingState","export":true,"for_":["XRImageTrackingResult"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"trackingState","type":"attribute","url":"#dom-xrimagetrackingresult-trackingstate"},
+"#dom-xrimagetrackingstate-emulated": {"displayText":"\"emulated\"","export":true,"for_":["XRImageTrackingState"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"emulated\"","type":"enum-value","url":"#dom-xrimagetrackingstate-emulated"},
+"#dom-xrimagetrackingstate-tracked": {"displayText":"\"tracked\"","export":true,"for_":["XRImageTrackingState"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"tracked\"","type":"enum-value","url":"#dom-xrimagetrackingstate-tracked"},
+"#dom-xrimagetrackingstate-untracked": {"displayText":"\"untracked\"","export":true,"for_":["XRImageTrackingState"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"\"untracked\"","type":"enum-value","url":"#dom-xrimagetrackingstate-untracked"},
+"#dom-xrsession-getimagetrackability": {"displayText":"getImageTrackability()","export":true,"for_":["XRSession"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"getImageTrackability()","type":"method","url":"#dom-xrsession-getimagetrackability"},
+"#dom-xrsessioninit-trackedimages": {"displayText":"trackedImages","export":true,"for_":["XRSessionInit"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"trackedImages","type":"dict-member","url":"#dom-xrsessioninit-trackedimages"},
+"#dom-xrtrackedimageinit-widthinmeters": {"displayText":"widthInMeters","export":true,"for_":["XRTrackedImageInit"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"widthInMeters","type":"dict-member","url":"#dom-xrtrackedimageinit-widthinmeters"},
+"#enumdef-xrimagetrackability": {"displayText":"XRImageTrackability","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRImageTrackability","type":"enum","url":"#enumdef-xrimagetrackability"},
+"#enumdef-xrimagetrackingstate": {"displayText":"XRImageTrackingState","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRImageTrackingState","type":"enum","url":"#enumdef-xrimagetrackingstate"},
+"#feature-descriptor-marker-tracking": {"displayText":"marker-tracking","export":true,"for_":["feature descriptor"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"marker-tracking","type":"dfn","url":"#feature-descriptor-marker-tracking"},
+"#image-index": {"displayText":"image index","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"image index","type":"dfn","url":"#image-index"},
+"#image-space": {"displayText":"image space","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"image space","type":"dfn","url":"#image-space"},
+"#image-trackable": {"displayText":"image trackable","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"image trackable","type":"dfn","url":"#image-trackable"},
+"#image-tracking-state": {"displayText":"image tracking state","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"image tracking state","type":"dfn","url":"#image-tracking-state"},
+"#image-was-detected": {"displayText":"image was detected","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"image was detected","type":"dfn","url":"#image-was-detected"},
+"#measured-width-in-meters": {"displayText":"measured width in meters","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"measured width in meters","type":"dfn","url":"#measured-width-in-meters"},
+"#obtain-image-trackability": {"displayText":"obtain image trackability","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"obtain image trackability","type":"dfn","url":"#obtain-image-trackability"},
+"#obtain-image-tracking-results": {"displayText":"obtain image tracking results","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"obtain image tracking results","type":"dfn","url":"#obtain-image-tracking-results"},
+"#sensitive-image-information": {"displayText":"sensitive image information","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"sensitive image information","type":"dfn","url":"#sensitive-image-information"},
+"#set-up-tracked-images": {"displayText":"set up tracked images","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"set up tracked images","type":"dfn","url":"#set-up-tracked-images"},
+"#suitable-for-tracking": {"displayText":"suitable for tracking","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"suitable for tracking","type":"dfn","url":"#suitable-for-tracking"},
+"#tracked-image": {"displayText":"tracked image","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"tracked image","type":"dfn","url":"#tracked-image"},
+"#update-tracked-images": {"displayText":"update tracked images","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"update tracked images","type":"dfn","url":"#update-tracked-images"},
+"#xrimagetrackingresult": {"displayText":"XRImageTrackingResult","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"XRImageTrackingResult","type":"interface","url":"#xrimagetrackingresult"},
+"#xrsession-list-of-tracked-images": {"displayText":"list of tracked images","export":true,"for_":["XRSession"],"level":"1","normative":true,"shortname":"webxr-marker-tracking","spec":"webxr-marker-tracking-1","status":"local","text":"list of tracked images","type":"dfn","url":"#xrsession-list-of-tracked-images"},
+"https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagebitmap": {"displayText":"ImageBitmap","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"ImageBitmap","type":"interface","url":"https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#imagebitmap"},
+"https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel": {"displayText":"in parallel","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"in parallel","type":"dfn","url":"https://html.spec.whatwg.org/multipage/infrastructure.html#in-parallel"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-realm": {"displayText":"relevant realm","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"relevant realm","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-relevant-realm"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-task": {"displayText":"queue a task","export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"queue a task","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-task"},
+"https://immersive-web.github.io/webxr/#dictdef-xrsessioninit": {"displayText":"XRSessionInit","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRSessionInit","type":"dictionary","url":"https://immersive-web.github.io/webxr/#dictdef-xrsessioninit"},
+"https://immersive-web.github.io/webxr/#dom-xrframe-getpose": {"displayText":"getPose(space, baseSpace)","export":true,"for_":["XRFrame"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"getPose(space, baseSpace)","type":"method","url":"https://immersive-web.github.io/webxr/#dom-xrframe-getpose"},
+"https://immersive-web.github.io/webxr/#dom-xrframe-session": {"displayText":"session","export":true,"for_":["XRFrame"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"session","type":"attribute","url":"https://immersive-web.github.io/webxr/#dom-xrframe-session"},
+"https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition": {"displayText":"emulatedPosition","export":true,"for_":["XRPose"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"emulatedPosition","type":"attribute","url":"https://immersive-web.github.io/webxr/#dom-xrpose-emulatedposition"},
+"https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures": {"displayText":"optionalFeatures","export":true,"for_":["XRSessionInit"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"optionalFeatures","type":"dict-member","url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-optionalfeatures"},
+"https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures": {"displayText":"requiredFeatures","export":true,"for_":["XRSessionInit"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"requiredFeatures","type":"dict-member","url":"https://immersive-web.github.io/webxr/#dom-xrsessioninit-requiredfeatures"},
+"https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession": {"displayText":"requestSession(mode)","export":true,"for_":["XRSystem"],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"requestSession(mode)","type":"method","url":"https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession"},
+"https://immersive-web.github.io/webxr/#xrframe": {"displayText":"XRFrame","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRFrame","type":"interface","url":"https://immersive-web.github.io/webxr/#xrframe"},
+"https://immersive-web.github.io/webxr/#xrsession": {"displayText":"XRSession","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRSession","type":"interface","url":"https://immersive-web.github.io/webxr/#xrsession"},
+"https://immersive-web.github.io/webxr/#xrspace": {"displayText":"XRSpace","export":true,"for_":[],"level":"1","normative":true,"shortname":"webxr","spec":"webxr","status":"current","text":"XRSpace","type":"interface","url":"https://immersive-web.github.io/webxr/#xrspace"},
+"https://infra.spec.whatwg.org/#list-contain": {"displayText":"contain","export":true,"for_":["list","stack","queue","set"],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"contain","type":"dfn","url":"https://infra.spec.whatwg.org/#list-contain"},
+"https://webidl.spec.whatwg.org/#Exposed": {"displayText":"Exposed","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"Exposed","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#Exposed"},
+"https://webidl.spec.whatwg.org/#SameObject": {"displayText":"SameObject","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"SameObject","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#SameObject"},
+"https://webidl.spec.whatwg.org/#SecureContext": {"displayText":"SecureContext","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"SecureContext","type":"extended-attribute","url":"https://webidl.spec.whatwg.org/#SecureContext"},
+"https://webidl.spec.whatwg.org/#a-new-promise": {"displayText":"a new promise","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"a new promise","type":"dfn","url":"https://webidl.spec.whatwg.org/#a-new-promise"},
+"https://webidl.spec.whatwg.org/#idl-float": {"displayText":"float","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"float","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-float"},
+"https://webidl.spec.whatwg.org/#idl-frozen-array": {"displayText":"FrozenArray","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"FrozenArray","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-frozen-array"},
+"https://webidl.spec.whatwg.org/#idl-promise": {"displayText":"Promise","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"Promise","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-promise"},
+"https://webidl.spec.whatwg.org/#idl-sequence": {"displayText":"sequence","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"sequence","type":"dfn","url":"https://webidl.spec.whatwg.org/#idl-sequence"},
+"https://webidl.spec.whatwg.org/#idl-unsigned-long": {"displayText":"unsigned long","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"unsigned long","type":"interface","url":"https://webidl.spec.whatwg.org/#idl-unsigned-long"},
+"https://webidl.spec.whatwg.org/#resolve": {"displayText":"resolve","export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"resolve","type":"dfn","url":"https://webidl.spec.whatwg.org/#resolve"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.displayText.toLowerCase() != linkText.toLowerCase()) {
+        // Give the original term if it's being displayed in a different way.
+        // But allow casing differences, they're insignificant.
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.displayText)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const refHintKey = link.getAttribute("data-refhint-key");
+    let key = url;
+    if(refHintKey) {
+        key = refHintKey + "_" + url;
+    }
+    const ref = refsData[key];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
+}
+</script>
+<script>/* Boilerplate: script-var-click-highlighting */
+"use strict";
+{
+/*
+Color-choosing design:
+
+* Colors are ordered by goodness.
+* On clicking a var, give it the earliest color
+    with the lowest usage in the algorithm.
+* On re-clicking, re-use the var's most recent color
+    if that's not currently being used elsewhere.
+*/
+
+const COLOR_COUNT = 7;
+
+document.addEventListener("click", e=>{
+    if(e.target.nodeName == "VAR") {
+        highlightSameAlgoVars(e.target);
+    }
+});
+
+function highlightSameAlgoVars(v) {
+    // Find the algorithm container.
+    let algoContainer = findAlgoContainer(v);
+
+    // Not highlighting document-global vars,
+    // too likely to be unrelated.
+    if(algoContainer == null) return;
+
+    const varName = nameFromVar(v);
+    if(!v.hasAttribute("data-var-color")) {
+        const newColor = chooseHighlightColor(algoContainer, v);
+        for(const el of algoContainer.querySelectorAll("var")) {
+            if(nameFromVar(el) == varName) {
+                el.setAttribute("data-var-color", newColor);
+                el.setAttribute("data-var-last-color", newColor);
+            }
+        }
+    } else {
+        for(const el of algoContainer.querySelectorAll("var")) {
+            if(nameFromVar(el) == varName) {
+                el.removeAttribute("data-var-color");
+            }
+        }
+    }
+}
+function findAlgoContainer(el) {
+    while(el != document.body) {
+        if(el.hasAttribute("data-algorithm")) return el;
+        el = el.parentNode;
+    }
+    return null;
+}
+function nameFromVar(el) {
+    return el.textContent.replace(/(\s|\xa0)+/g, " ").trim();
+}
+function colorCountsFromContainer(container) {
+    const namesFromColor = Array.from({length:COLOR_COUNT}, x=>new Set());
+    for(let v of container.querySelectorAll("var[data-var-color]")) {
+        let color = +v.getAttribute("data-var-color");
+        namesFromColor[color].add(nameFromVar(v));
+    }
+
+    return namesFromColor.map(x=>x.size);
+}
+function leastUsedColor(colors) {
+    // Find the earliest color with the lowest count.
+    let minCount = Infinity;
+    let minColor = null;
+    for(var i = 0; i < colors.length; i++) {
+        if(colors[i] < minCount) {
+            minColor = i;
+            minCount = colors[i];
+        }
+    }
+    return minColor;
+}
+function chooseHighlightColor(container, v) {
+    const colorCounts = colorCountsFromContainer(container);
+    if(v.hasAttribute("data-var-last-color")) {
+        let color = +v.getAttribute("data-var-last-color");
+        if(colorCounts[color] == 0) return color;
+    }
+    return leastUsedColor(colorCounts);
+}
+}
+</script>
